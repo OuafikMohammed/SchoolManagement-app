@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Grade{% endblock %}
+
+{% block body %}
+<h1>Edit Grade</h1>
+
+{{ form_start(form) }}
+  <div class="mb-3">{{ form_row(form.value) }}</div>
+  <div class="mb-3">{{ form_row(form.type) }}</div>
+  <div class="mb-3">{{ form_row(form.coefficient) }}</div>
+  <button type="submit" class="btn btn-primary">Update Grade</button>
+  <a href="{{ path('app_grade_index') }}" class="btn btn-outline-secondary">Cancel</a>
+{{ form_end(form) }}
+{% endblock %}

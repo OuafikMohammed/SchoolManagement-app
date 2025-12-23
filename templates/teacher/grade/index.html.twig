@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Grades{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Manage Grades</h1>
+  <a href="{{ path('app_grade_add', {courseId: 0}) }}" class="btn btn-primary">+ Add Grade</a>
+</div>
+
+{% if grades %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Course</th>
+        <th>Grade</th>
+        <th>Type</th>
+        <th>Coeff</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for grade in grades %}
+        <tr>
+          <td>{{ grade.student.email }}</td>
+          <td>{{ grade.course.title }}</td>
+          <td><strong>{{ grade.value }}/20</strong></td>
+          <td>{{ grade.type }}</td>
+          <td>{{ grade.coefficient }}</td>
+          <td>
+            <a href="{{ path('app_grade_edit', {id: grade.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <form method="POST" action="{{ path('app_grade_delete', {id: grade.id}) }}" style="display:inline;">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ grade.id) }}">
+              <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this grade?')">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="alert alert-info">No grades yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Grade Bulletin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; }
+        .info {
+            margin-bottom: 30px;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 40px;
+        }
+        .average-box {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-left: 4px solid #0084d1;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Grade Bulletin</h1>
+        <p>School Management System</p>
+    </div>
+
+    <div class="info">
+        <p><strong>Student:</strong> {{ student.name }} ({{ student.email }})</p>
+        <p><strong>Course:</strong> {{ course.title }}</p>
+        <p><strong>Generated:</strong> {{ generatedAt|date('Y-m-d H:i') }}</p>
+    </div>
+
+    {% if grades|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Grade Type</th>
+                    <th>Value</th>
+                    <th>Coefficient</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.type }}</td>
+                        <td>{{ grade.value }}/20</td>
+                        <td>{{ grade.coefficient }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="average-box">
+            <p><strong>Course Average:</strong> <span style="font-size: 20px;">{{ average|round(2) }}/20</span></p>
+        </div>
+    {% else %}
+        <p>No grades recorded yet.</p>
+    {% endif %}
+
+    <div class="footer">
+        <p>This document was automatically generated and does not require a signature.</p>
+    </div>
+</body>
+</html>

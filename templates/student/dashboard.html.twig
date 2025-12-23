@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Student Dashboard</h1>
+  <a href="{{ path('app_enrollment_available') }}" class="btn btn-primary">+ Enroll in Course</a>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-12">
+    <h2>My Courses</h2>
+    {% if enrollments %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Teacher</th>
+            <th>Enrolled</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for enrollment in enrollments %}
+            <tr>
+              <td><strong>{{ enrollment.course.title }}</strong></td>
+              <td>{{ enrollment.course.teacher.name }}</td>
+              <td>{{ enrollment.enrolledAt|date('Y-m-d') }}</td>
+              <td>
+                <form method="POST" action="{{ path('app_enrollment_drop', {courseId: enrollment.course.id}) }}" style="display:inline;">
+                  <input type="hidden" name="_token" value="{{ csrf_token('drop' ~ enrollment.course.id) }}">
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Drop this course?')">Drop</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="alert alert-warning">You're not enrolled in any courses yet. <a href="{{ path('app_enrollment_available') }}">Browse courses</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

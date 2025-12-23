@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Available Courses{% endblock %}
+
+{% block body %}
+<h1>Available Courses</h1>
+<p class="text-muted">Browse and enroll in courses</p>
+
+{% if courses %}
+  <div class="row">
+    {% for course in courses %}
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ course.title }}</h5>
+            <p class="card-text">{{ course.description|slice(0, 100) }}...</p>
+            <p class="text-muted">Teacher: {{ course.teacher.name }}</p>
+            <form method="POST" action="{{ path('app_enrollment_enroll', {courseId: course.id}) }}" style="display:inline;">
+              <input type="hidden" name="_token" value="{{ csrf_token('enroll' ~ course.id) }}">
+              <button type="submit" class="btn btn-success btn-sm">Enroll</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="alert alert-info">No available courses at the moment.</p>
+{% endif %}
+
+<hr>
+<a href="{{ path('app_student_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block body %}
+<h1>Course Statistics</h1>
+
+{% for stat in courseStats %}
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">{{ stat.course.title }}</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">{{ stat.studentCount }} students enrolled</p>
+      
+      {% if stat.ranking %}
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Student</th>
+              <th>Average</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for index, student_stat in stat.ranking %}
+              <tr>
+                <td><strong>#{{ index + 1 }}</strong></td>
+                <td>{{ student_stat.student.email }}</td>
+                <td>{{ student_stat.average|round(2) }}/20</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-muted">No grades yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}

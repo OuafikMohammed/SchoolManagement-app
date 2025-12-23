@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ course.title }} - Statistics{% endblock %}
+
+{% block body %}
+<h1>{{ course.title }} - Statistics</h1>
+
+<a href="{{ path('teacher_statistic_index') }}" class="btn btn-secondary mb-3">← Back</a>
+
+<div class="card">
+  <div class="card-body">
+    <p><strong>Students Enrolled:</strong> {{ enrollmentCount }}</p>
+    <p><strong>Grades Recorded:</strong> {{ gradeCount }}</p>
+  </div>
+</div>
+
+<h3 class="mt-5">Grade Distribution</h3>
+
+{% if gradeDistribution %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Average</th>
+        <th>Grade Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in gradeDistribution %}
+        <tr>
+          <td>{{ stat.student.email }}</td>
+          <td><strong>{{ stat.average|round(2) }}/20</strong></td>
+          <td>{{ stat.gradeCount }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="text-muted">No students have grades yet.</p>
+{% endif %}
+
+<h3 class="mt-5">Grade Types</h3>
+
+{% if gradesByType %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Count</th>
+        <th>Average</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for type, stats in gradesByType %}
+        <tr>
+          <td>{{ type }}</td>
+          <td>{{ stats.count }}</td>
+          <td>{{ stats.average|round(2) }}/20</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="text-muted">No grades yet.</p>
+{% endif %}
+{% endblock %}

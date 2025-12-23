@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Course Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; }
+        .info {
+            margin-bottom: 30px;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Course Report</h1>
+        <p>School Management System</p>
+    </div>
+
+    <div class="info">
+        <p><strong>Course:</strong> {{ course.title }}</p>
+        <p><strong>Total Students:</strong> {{ gradeDistribution|length }}</p>
+        <p><strong>Generated:</strong> {{ generatedAt|date('Y-m-d H:i') }}</p>
+    </div>
+
+    {% if gradeDistribution|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Average Grade</th>
+                    <th>Grade Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in gradeDistribution %}
+                    <tr>
+                        <td>{{ stat.student.name }}</td>
+                        <td>{{ stat.average|round(2) }}/20</td>
+                        <td>{{ stat.gradeCount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No student grades recorded yet.</p>
+    {% endif %}
+
+    <div class="footer">
+        <p>This document was automatically generated.</p>
+    </div>
+</body>
+</html>

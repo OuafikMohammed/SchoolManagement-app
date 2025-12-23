@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Course{% endblock %}
+
+{% block body %}
+<h1>Edit Course: {{ course.title }}</h1>
+
+{{ form_start(form) }}
+  <div class="mb-3">{{ form_row(form.title) }}</div>
+  <div class="mb-3">{{ form_row(form.description) }}</div>
+  <button type="submit" class="btn btn-primary">Update</button>
+  <a href="{{ path('app_course_show', {id: course.id}) }}" class="btn btn-outline-secondary">Cancel</a>
+{{ form_end(form) }}
+{% endblock %}
