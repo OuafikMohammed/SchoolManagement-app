@@ -245,3 +245,4 @@ This project is open source and available under the MIT License.
 - **Dev 2**: Frontend Specialist (Controllers, Forms, UI)
 
 Last updated: December 2025
+©️By Mohammed Ouafik &Abdel Wadoud Omrachi 
