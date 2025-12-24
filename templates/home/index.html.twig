@@ -60,7 +60,7 @@
               <p class="card-text text-muted small">{{ course.description|slice(0, 80) }}{% if course.description|length > 80 %}...{% endif %}</p>
               <p class="text-muted"><small>by {{ course.teacher.name }}</small></p>
               {% if app.user and is_granted('ROLE_STUDENT') %}
-                <a href="{{ path('student_enrollment_available') }}" class="btn btn-sm btn-primary">Enroll Now</a>
+                <a href="{{ path('app_enrollment_available') }}" class="btn btn-sm btn-primary">Enroll Now</a>
               {% endif %}
             </div>
           </div>

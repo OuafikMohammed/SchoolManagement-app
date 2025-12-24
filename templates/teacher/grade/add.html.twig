@@ -18,9 +18,11 @@
                     {{ form_start(form, {'attr': {'novalidate': true}}) }}
 
                     <!-- Course Info -->
+                    {% if course %}
                     <div class="alert alert-light mb-4" role="alert">
                         <strong>Course:</strong> {{ course.title }}
                     </div>
+                    {% endif %}
 
                     <!-- Form Fields -->
                     <div class="row">
@@ -32,6 +34,18 @@
                         </div>
                     </div>
 
+                    <!-- Course Selection (if not pre-selected) -->
+                    {% if not course %}
+                    <div class="mb-3">
+                        {{ form_row(form.course, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    {% else %}
+                    <!-- Hidden Course Field -->
+                    <div style="display:none;">
+                        {{ form_row(form.course) }}
+                    </div>
+                    {% endif %}
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
@@ -39,11 +53,6 @@
                         <div class="col-md-6 mb-3">
                             {{ form_row(form.coefficient, {'attr': {'class': 'form-control'}}) }}
                         </div>
-                    </div>
-
-                    <!-- Hidden Fields -->
-                    <div style="display:none;">
-                        {{ form_row(form.course) }}
                     </div>
 
                     <!-- Form Errors -->

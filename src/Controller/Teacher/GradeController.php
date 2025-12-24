@@ -47,7 +47,7 @@ class GradeController extends AbstractController
 
         foreach ($courses as $course) {
             $courseGrades = $this->gradeRepository->findByCourse($course);
-            
+
             // Apply filters
             if ($courseFilter && $course->getId() != $courseFilter) {
                 if ($courseFilter == $course->getId()) {
@@ -91,22 +91,26 @@ class GradeController extends AbstractController
     /**
      * Add a new grade to a course
      */
-    #[Route('/course/{courseId}/add', name: 'app_grade_add', methods: ['GET', 'POST'])]
+    #[Route('/add', name: 'app_grade_add', methods: ['GET', 'POST'])]
+    #[Route('/course/{courseId}/add', name: 'app_grade_add_course', methods: ['GET', 'POST'])]
     public function add(
-        int $courseId,
+        ?int $courseId = null,
         Request $request,
     ): Response {
-        $course = $this->em->getRepository(Course::class)->find($courseId);
-
-        if (!$course) {
-            throw $this->createNotFoundException('Course not found');
+        $course = null;
+        if ($courseId && $courseId > 0) {
+            $course = $this->em->getRepository(Course::class)->find($courseId);
         }
 
         // Use Voter-based authorization for consistent permission handling
-        $this->denyAccessUnlessGranted('ADD', $course);
+        if ($course) {
+            $this->denyAccessUnlessGranted('ADD', $course);
+        }
 
         $grade = new Grade();
-        $grade->setCourse($course);
+        if ($course) {
+            $grade->setCourse($course);
+        }
 
         $form = $this->createForm(GradeType::class, $grade);
         $form->handleRequest($request);
@@ -182,7 +186,7 @@ class GradeController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('DELETE', $grade);
 
-        if ($this->isCsrfTokenValid('delete'.$grade->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $grade->getId(), $request->request->get('_token'))) {
             $studentName = $grade->getStudent()->getName() ?? $grade->getStudent()->getEmail();
             $this->gradeService->deleteGrade($grade);
             $this->addFlash('success', sprintf('Grade deleted for %s', $studentName));
@@ -226,7 +230,7 @@ class GradeController extends AbstractController
         }
 
         $grades = $this->gradeRepository->findByCourseGroupedByStudent($course);
-        
+
         // Generate CSV content
         $csv = "Student,Email,Grade Value,Grade Type,Coefficient,Created At\n";
         foreach ($grades as $grade) {
@@ -243,7 +247,7 @@ class GradeController extends AbstractController
 
         $response = new Response($csv);
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="'.$course->getTitle().'_grades.csv"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $course->getTitle() . '_grades.csv"');
 
         return $response;
     }

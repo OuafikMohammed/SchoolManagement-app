@@ -5,13 +5,14 @@ namespace App\Repository;
 use App\Entity\Course;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-class StatisticRepository extends ServiceEntityRepository
+class StatisticRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, \stdClass::class);
+    public function __construct(
+        private EntityManagerInterface $em,
+    ) {
     }
 
     /**
@@ -19,8 +20,7 @@ class StatisticRepository extends ServiceEntityRepository
      */
     public function calculateAverageGrade(User $student, Course $course): ?float
     {
-        $em = $this->getEntityManager();
-        $conn = $em->getConnection();
+        $conn = $this->em->getConnection();
 
         $sql = '
             SELECT SUM(g.value * g.coefficient) / SUM(g.coefficient) as average
@@ -41,8 +41,7 @@ class StatisticRepository extends ServiceEntityRepository
      */
     public function getRankedStudentsByCourse(Course $course): array
     {
-        $em = $this->getEntityManager();
-        $conn = $em->getConnection();
+        $conn = $this->em->getConnection();
 
         $sql = '
             SELECT 
@@ -69,8 +68,7 @@ class StatisticRepository extends ServiceEntityRepository
      */
     public function getAveragesByType(User $student, Course $course): array
     {
-        $em = $this->getEntityManager();
-        $conn = $em->getConnection();
+        $conn = $this->em->getConnection();
 
         $sql = '
             SELECT 
@@ -94,8 +92,7 @@ class StatisticRepository extends ServiceEntityRepository
      */
     public function getClassStatistics(Course $course): array
     {
-        $em = $this->getEntityManager();
-        $conn = $em->getConnection();
+        $conn = $this->em->getConnection();
 
         $sql = '
             SELECT 
@@ -118,8 +115,7 @@ class StatisticRepository extends ServiceEntityRepository
      */
     public function getGradeDistribution(Course $course): array
     {
-        $em = $this->getEntityManager();
-        $conn = $em->getConnection();
+        $conn = $this->em->getConnection();
 
         $sql = '
             SELECT 
@@ -154,8 +150,7 @@ class StatisticRepository extends ServiceEntityRepository
      */
     public function getStudentRankingInCourse(User $student, Course $course): array
     {
-        $em = $this->getEntityManager();
-        $conn = $em->getConnection();
+        $conn = $this->em->getConnection();
 
         $sql = '
             SELECT 

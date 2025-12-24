@@ -5,7 +5,7 @@
 {% block body %}
 <h1>My Courses</h1>
 
-<a href="{{ path('teacher_course_new') }}" class="btn btn-primary mb-3">+ New Course</a>
+<a href="{{ path('app_course_new') }}" class="btn btn-primary mb-3">+ New Course</a>
 
 {% if courses %}
   <div class="table-responsive">
@@ -29,9 +29,9 @@
               </span>
             </td>
             <td>
-              <a href="{{ path('teacher_course_show', {id: course.id}) }}" class="btn btn-sm btn-info">View</a>
-              <a href="{{ path('teacher_course_edit', {id: course.id}) }}" class="btn btn-sm btn-warning">Edit</a>
-              <form method="POST" action="{{ path('teacher_course_delete', {id: course.id}) }}" style="display:inline;">
+              <a href="{{ path('app_course_show', {id: course.id}) }}" class="btn btn-sm btn-info">View</a>
+              <a href="{{ path('app_course_edit', {id: course.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+              <form method="POST" action="{{ path('app_course_delete', {id: course.id}) }}" style="display:inline;">
                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this course?')">Delete</button>
               </form>
@@ -43,7 +43,7 @@
   </div>
 {% else %}
   <div class="alert alert-info">
-    No courses created yet. <a href="{{ path('teacher_course_new') }}">Create your first course</a>
+    No courses created yet. <a href="{{ path('app_course_new') }}">Create your first course</a>
   </div>
 {% endif %}
 {% endblock %}

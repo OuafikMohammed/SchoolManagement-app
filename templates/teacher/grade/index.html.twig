@@ -11,7 +11,7 @@
             <p class="text-muted">Manage and track student grades across all your courses</p>
         </div>
         <div class="btn-group" role="group">
-            <a href="{{ path('app_grade_add', {courseId: 0}) }}" class="btn btn-primary">
+            <a href="{{ path('app_grade_add') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Add Grade
             </a>
             {% if selected_course %}
@@ -149,7 +149,7 @@
     {% else %}
         <div class="alert alert-info" role="alert">
             <i class="bi bi-info-circle"></i>
-            <strong>No grades found.</strong> Start by <a href="{{ path('app_grade_add', {courseId: 0}) }}" class="alert-link">adding a new grade</a>.
+            <strong>No grades found.</strong> Start by <a href="{{ path('app_grade_add') }}" class="alert-link">adding a new grade</a>.
         </div>
     {% endif %}
 </div>

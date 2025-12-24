@@ -29,6 +29,7 @@ class StatisticController extends AbstractController
     public function index(): Response
     {
         $user = $this->getUser();
+        assert($user instanceof \App\Entity\User);
         $courses = $user->getCourses();
         $courseStats = [];
 
@@ -36,7 +37,7 @@ class StatisticController extends AbstractController
             $ranking = $this->statisticService->getCourseRanking($course);
             $statistics = $this->statisticService->getClassStatistics($course);
             $distribution = $this->statisticService->getGradeDistribution($course);
-            
+
             $courseStats[] = [
                 'course' => $course,
                 'ranking' => $ranking,
@@ -139,7 +140,7 @@ class StatisticController extends AbstractController
 
         $response = new Response(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Content-Disposition', 'attachment; filename="statistics_'.$course->getId().'.json"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="statistics_' . $course->getId() . '.json"');
 
         return $response;
     }
