@@ -1,0 +1,18 @@
+{
+  "[php]": {
+    "editor.defaultFormatter": "DEVSENSE.phptools-vscode",
+    "editor.formatOnSave": true
+  },
+  "intelephense.diagnostics.undefinedTypes": false,
+  "intelephense.diagnostics.undefinedMethod": false,
+  "intelephense.diagnostics.undefinedVariable": false,
+  "intelephense.diagnostics.undefinedFunctions": false,
+  "intelephense.diagnostics.undefinedClass": false,
+  "intelephense.php.version": "8.2",
+  "intelephense.environment.includePath": [
+    "${workspaceFolder}"
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  }
+}

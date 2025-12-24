@@ -1,41 +1,125 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Statistics{% endblock %}
+{% block title %}Statistics Dashboard{% endblock %}
 
 {% block body %}
-<h1>Course Statistics</h1>
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="mb-4">
+        <h1 class="h2">Statistics Dashboard</h1>
+        <p class="text-muted">Overview of grades and student performance across your courses</p>
+    </div>
 
-{% for stat in courseStats %}
-  <div class="card mb-4">
-    <div class="card-header">
-      <h5 class="mb-0">{{ stat.course.title }}</h5>
-    </div>
-    <div class="card-body">
-      <p class="text-muted">{{ stat.studentCount }} students enrolled</p>
-      
-      {% if stat.ranking %}
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Student</th>
-              <th>Average</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for index, student_stat in stat.ranking %}
-              <tr>
-                <td><strong>#{{ index + 1 }}</strong></td>
-                <td>{{ student_stat.student.email }}</td>
-                <td>{{ student_stat.average|round(2) }}/20</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <p class="text-muted">No grades yet.</p>
-      {% endif %}
-    </div>
-  </div>
-{% endfor %}
+    <!-- Course Statistics Cards -->
+    {% if courseStats %}
+        {% for stat in courseStats %}
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">{{ stat.course.title }}</h5>
+                            <small class="text-muted">{{ stat.gradeCount }} grades | {{ stat.studentCount }} students</small>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{{ path('app_statistic_course', {courseId: stat.course.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-graph-up"></i> Detailed Stats
+                            </a>
+                            <a href="{{ path('app_statistic_export', {courseId: stat.course.id}) }}" class="btn btn-sm btn-secondary">
+                                <i class="bi bi-download"></i> Export
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Quick Stats -->
+                    {% if stat.statistics %}
+                        <div class="row mb-4 text-center">
+                            <div class="col-md-3">
+                                <small class="text-muted d-block">Class Average</small>
+                                <h5>{{ stat.statistics.average_grade|number_format(2, '.', '') }}/20</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted d-block">Highest Grade</small>
+                                <h5>{{ stat.statistics.max_grade|number_format(1, '.', '') }}/20</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted d-block">Lowest Grade</small>
+                                <h5>{{ stat.statistics.min_grade|number_format(1, '.', '') }}/20</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted d-block">Total Grades</small>
+                                <h5>{{ stat.statistics.total_grades }}</h5>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Top Performers -->
+                    {% if stat.ranking %}
+                        <div class="mb-4">
+                            <h6 class="card-subtitle mb-3">Top Performers</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Student</th>
+                                            <th class="text-center">Average</th>
+                                            <th class="text-center">Grades</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for entry in stat.ranking|slice(0, 5) %}
+                                            <tr>
+                                                <td>
+                                                    <span class="badge {% if entry.rank == 1 %}bg-warning{% elseif entry.rank == 2 %}bg-secondary{% elseif entry.rank == 3 %}bg-danger{% else %}bg-light text-dark{% endif %}">
+                                                        #{{ entry.rank }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <strong>{{ entry.name }}</strong>
+                                                    <br>
+                                                    <small class="text-muted">{{ entry.email }}</small>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge {% if entry.average >= 16 %}bg-success{% elseif entry.average >= 12 %}bg-info{% elseif entry.average >= 10 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                        {{ entry.average|number_format(2, '.', '') }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">{{ entry.grade_count }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Grade Distribution -->
+                    {% if stat.distribution %}
+                        <div>
+                            <h6 class="card-subtitle mb-3">Grade Distribution</h6>
+                            <div class="row">
+                                {% for dist in stat.distribution %}
+                                    <div class="col-md-2 mb-2">
+                                        <div class="text-center p-2 bg-light rounded">
+                                            <small class="text-muted d-block">{{ dist.grade_range }}</small>
+                                            <strong class="d-block">{{ dist.count }}</strong>
+                                            <small class="text-muted">({{ dist.percentage }}%)</small>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            <strong>No courses yet.</strong> Create courses to see student statistics.
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
+

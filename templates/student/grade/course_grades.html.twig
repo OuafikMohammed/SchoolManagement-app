@@ -1,0 +1,214 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ course.title }} - My Grades{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h2">{{ course.title }}</h1>
+                {% if course.teacher %}
+                    <p class="text-muted">Taught by {{ course.teacher.name ?: course.teacher.email }}</p>
+                {% endif %}
+            </div>
+            <a href="{{ path('app_student_grades') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Grades
+            </a>
+        </div>
+    </div>
+
+    <!-- Course Description -->
+    {% if course.description %}
+        <div class="alert alert-light" role="alert">
+            {{ course.description }}
+        </div>
+    {% endif %}
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">My Average</h6>
+                    <h2 class="card-text">
+                        {% if average %}
+                            <span class="badge {% if average >= 16 %}bg-success{% elseif average >= 12 %}bg-info{% elseif average >= 10 %}bg-warning{% else %}bg-danger{% endif %} p-3">
+                                {{ average|number_format(2, '.', '') }}/20
+                            </span>
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </h2>
+                </div>
+            </div>
+        </div>
+        {% if ranking %}
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted">My Ranking</h6>
+                        <h2 class="card-text">
+                            <span class="badge bg-primary p-3">#{{ ranking.rank }}</span>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted">Class Average</h6>
+                        <h2 class="card-text">{{ ranking.average|number_format(2, '.', '') }}/20</h2>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Total Grades</h6>
+                    <h2 class="card-text">{{ grades|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    {% if progress %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Your Progress</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Average Grade</label>
+                        <p><strong>{{ progress.average|number_format(2, '.', '') }}/20</strong></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Trend</label>
+                        <p>
+                            {% if progress.trend == 'improving' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-graph-up"></i> Improving
+                                </span>
+                            {% elseif progress.trend == 'declining' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-graph-down"></i> Declining
+                                </span>
+                            {% elseif progress.trend == 'stable' %}
+                                <span class="badge bg-info">
+                                    <i class="bi bi-dash-lg"></i> Stable
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">N/A</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-muted">Highest Grade</label>
+                        <p><strong>{{ progress.max_grade }}/20</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-muted">Lowest Grade</label>
+                        <p><strong>{{ progress.min_grade }}/20</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-muted">Total Assessments</label>
+                        <p><strong>{{ progress.total_grades }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Grades by Type -->
+    {% if averagesByType %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Grades by Assessment Type</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Assessment Type</th>
+                            <th class="text-center">Average</th>
+                            <th class="text-center">Count</th>
+                            <th class="text-center">Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for type, data in averagesByType %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ type|capitalize }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge {% if data.average >= 16 %}bg-success{% elseif data.average >= 12 %}bg-info{% elseif data.average >= 10 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ data.average|number_format(2, '.', '') }}/20
+                                    </span>
+                                </td>
+                                <td class="text-center">{{ data.count }}</td>
+                                <td class="text-center">
+                                    {% if data.average >= 14 %}
+                                        <span class="badge bg-success"><i class="bi bi-check-lg"></i></span>
+                                    {% elseif data.average >= 10 %}
+                                        <span class="badge bg-info"><i class="bi bi-dash-lg"></i></span>
+                                    {% else %}
+                                        <span class="badge bg-danger"><i class="bi bi-exclamation-lg"></i></span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- All Grades -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">All Grades in {{ course.title }}</h5>
+        </div>
+        {% if grades %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Type</th>
+                            <th class="text-center">Grade</th>
+                            <th class="text-center">Coefficient</th>
+                            <th>Recorded</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ grade.type|capitalize }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge {% if grade.value >= 16 %}bg-success{% elseif grade.value >= 12 %}bg-info{% elseif grade.value >= 10 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ grade.value }}/20
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">{{ grade.coefficient }}×</span>
+                                </td>
+                                <td>{{ grade.createdAt|date('M d, Y H:i') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card-body">
+                <p class="text-muted mb-0">No grades recorded yet in this course.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

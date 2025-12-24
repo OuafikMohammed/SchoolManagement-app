@@ -3,67 +3,148 @@
 {% block title %}My Grades{% endblock %}
 
 {% block body %}
-<h1>My Grades</h1>
-
-{% if enrollments %}
-  {% for enrollment in enrollments %}
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="mb-0">{{ enrollment.course.title }}</h5>
-      </div>
-      <div class="card-body">
-        <p class="text-muted">{{ enrollment.course.description }}</p>
-        
-        {% set grades = enrollment.course.grades %}
-        {% set studentGrades = [] %}
-        
-        {% for grade in grades %}
-          {% if grade.student.id == app.user.id %}
-            {% set studentGrades = studentGrades|merge([grade]) %}
-          {% endif %}
-        {% endfor %}
-
-        {% if studentGrades %}
-          <table class="table table-sm">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Grade</th>
-                <th>Coefficient</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% set totalWeighted = 0 %}
-              {% set totalCoeff = 0 %}
-              {% for grade in studentGrades %}
-                <tr>
-                  <td>{{ grade.type }}</td>
-                  <td><strong>{{ grade.value }}/20</strong></td>
-                  <td>{{ grade.coefficient }}</td>
-                  <td>{{ grade.createdAt|date('Y-m-d') }}</td>
-                </tr>
-                {% set totalWeighted = totalWeighted + (grade.value * grade.coefficient) %}
-                {% set totalCoeff = totalCoeff + grade.coefficient %}
-              {% endfor %}
-            </tbody>
-          </table>
-          
-          {% if totalCoeff > 0 %}
-            <p class="mt-3">
-              <strong>Course Average:</strong> 
-              <span class="badge bg-info">{{ (totalWeighted / totalCoeff)|round(2) }}/20</span>
-            </p>
-          {% endif %}
-        {% else %}
-          <p class="text-muted">No grades recorded yet.</p>
-        {% endif %}
-      </div>
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="mb-4">
+        <h1 class="h2">My Grades</h1>
+        <p class="text-muted">View all your grades and course averages</p>
     </div>
-  {% endfor %}
-{% else %}
-  <div class="alert alert-info">
-    You are not enrolled in any courses yet. <a href="{{ path('student_enrollment_available') }}">Browse courses</a>
-  </div>
-{% endif %}
+
+    <!-- Overall Average Card -->
+    {% if overallAverage %}
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Overall Average</h6>
+                        <h2 class="card-text">{{ overallAverage|number_format(2, '.', '') }}/20</h2>
+                        <small class="text-white-50">Across all courses</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted">Enrolled Courses</h6>
+                        <h2 class="card-text">{{ enrollments|length }}</h2>
+                        <small class="text-muted">Active enrollments</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Courses with Grades -->
+    {% if courseGrades %}
+        {% for courseGrade in courseGrades %}
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">{{ courseGrade.course.title }}</h5>
+                            {% if courseGrade.course.teacher %}
+                                <small class="text-muted">Taught by {{ courseGrade.course.teacher.name ?: courseGrade.course.teacher.email }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-auto">
+                            <span class="badge {% if courseGrade.average >= 16 %}bg-success{% elseif courseGrade.average >= 12 %}bg-info{% elseif courseGrade.average >= 10 %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ courseGrade.average|number_format(2, '.', '') }}/20
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if courseGrade.course.description %}
+                        <p class="text-muted">{{ courseGrade.course.description }}</p>
+                    {% endif %}
+
+                    <!-- Grade Statistics -->
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-center">
+                            <small class="text-muted d-block">Total Grades</small>
+                            <strong>{{ courseGrade.gradeCount }}</strong>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <small class="text-muted d-block">Average</small>
+                            <strong>{{ courseGrade.average|number_format(2, '.', '') }}</strong>
+                        </div>
+                        {% if courseGrade.ranking %}
+                            <div class="col-md-3 text-center">
+                                <small class="text-muted d-block">Ranking</small>
+                                <strong>#{{ courseGrade.ranking.rank }}</strong>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <small class="text-muted d-block">Class Average</small>
+                                <strong>{{ courseGrade.ranking.average|number_format(2, '.', '') }}</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Grades Table -->
+                    {% if courseGrade.grades %}
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Type</th>
+                                        <th class="text-center">Grade</th>
+                                        <th class="text-center">Coefficient</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for grade in courseGrade.grades %}
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-light text-dark">{{ grade.type|capitalize }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge {% if grade.value >= 16 %}bg-success{% elseif grade.value >= 12 %}bg-info{% elseif grade.value >= 10 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                    {{ grade.value }}/20
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-secondary">{{ grade.coefficient }}×</span>
+                                            </td>
+                                            <td>{{ grade.createdAt|date('M d, Y') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <a href="{{ path('app_student_grades_course', {courseId: courseGrade.course.id}) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> View Detailed Stats
+                            </a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0"><i class="bi bi-info-circle"></i> No grades recorded yet in this course.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            <strong>No grades yet.</strong> Your teachers will add grades as they evaluate your work.
+        </div>
+    {% endif %}
+
+    <!-- Empty State -->
+    {% if not enrollments %}
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Not enrolled in any courses.</strong> <a href="{{ path('app_enrollment_available') }}" class="alert-link">Browse and enroll in courses</a>.
+        </div>
+    {% endif %}
+
+    <!-- Action Links -->
+    <div class="mt-4 text-center">
+        <a href="{{ path('app_student_statistics') }}" class="btn btn-outline-primary">
+            <i class="bi bi-graph-up"></i> View Overall Statistics
+        </a>
+    </div>
+</div>
 {% endblock %}
+

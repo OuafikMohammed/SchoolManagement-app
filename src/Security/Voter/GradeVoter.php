@@ -12,9 +12,16 @@ class GradeVoter extends Voter
     public const VIEW = 'VIEW';
     public const EDIT = 'EDIT';
     public const DELETE = 'DELETE';
+    public const ADD = 'ADD';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
+        // ADD permission works on Course objects, others work on Grade objects
+        if ($attribute === self::ADD) {
+            // Subject should be a Course for ADD operations
+            return true;
+        }
+
         if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE])) {
             return false;
         }
@@ -34,6 +41,11 @@ class GradeVoter extends Voter
             return false;
         }
 
+        // Handle ADD permission on Course
+        if ($attribute === self::ADD) {
+            return $this->canAdd($subject, $user);
+        }
+
         /** @var Grade $grade */
         $grade = $subject;
 
@@ -43,6 +55,13 @@ class GradeVoter extends Voter
             self::DELETE => $this->canDelete($grade, $user),
             default => false,
         };
+    }
+
+    private function canAdd(mixed $course, User $user): bool
+    {
+        // Teacher can add grades to their courses, admins can add to any course
+        return in_array('ROLE_ADMIN', $user->getRoles())
+            || (is_object($course) && method_exists($course, 'getTeacher') && $course->getTeacher() === $user);
     }
 
     private function canView(Grade $grade, User $user): bool

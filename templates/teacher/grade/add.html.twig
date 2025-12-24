@@ -3,14 +3,82 @@
 {% block title %}Add Grade{% endblock %}
 
 {% block body %}
-<h1>Add Grade for {{ course.title }}</h1>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="mb-4">
+                <h1 class="h2">Add New Grade</h1>
+                <p class="text-muted">Enter grade information for student</p>
+            </div>
 
-{{ form_start(form) }}
-  <div class="mb-3">{{ form_row(form.student) }}</div>
-  <div class="mb-3">{{ form_row(form.value) }}</div>
-  <div class="mb-3">{{ form_row(form.type) }}</div>
-  <div class="mb-3">{{ form_row(form.coefficient) }}</div>
-  <button type="submit" class="btn btn-success">Add Grade</button>
-  <a href="{{ path('app_grade_index') }}" class="btn btn-outline-secondary">Cancel</a>
-{{ form_end(form) }}
+            <!-- Form Card -->
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': true}}) }}
+
+                    <!-- Course Info -->
+                    <div class="alert alert-light mb-4" role="alert">
+                        <strong>Course:</strong> {{ course.title }}
+                    </div>
+
+                    <!-- Form Fields -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.student, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.value, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.coefficient, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+
+                    <!-- Hidden Fields -->
+                    <div style="display:none;">
+                        {{ form_row(form.course) }}
+                    </div>
+
+                    <!-- Form Errors -->
+                    {% if form.vars.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.vars.errors %}
+                                <div>{{ error.message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Add Grade
+                        </button>
+                        <a href="{{ path('app_grade_index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <!-- Help Text -->
+            <div class="alert alert-info mt-4" role="alert">
+                <strong>Tip:</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Grade values should be between 0 and 20</li>
+                    <li>The coefficient determines the weight of this grade in the average calculation</li>
+                    <li>Different types of assessments can have different coefficients</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

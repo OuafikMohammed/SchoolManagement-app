@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="5"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/psalm"
+    xsi:schemaLocation="https://getpsalm.org/schema/psalm vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="src" />
+        <ignoreFiles>
+            <directory name="vendor" />
+            <directory name="tests" />
+        </ignoreFiles>
+    </projectFiles>
+    
+    <issueHandlers>
+        <UndefinedClass>
+            <errorLevel type="suppress" />
+        </UndefinedClass>
+        <UndefinedMethod>
+            <errorLevel type="suppress" />
+        </UndefinedMethod>
+        <PossiblyUndefinedMethod>
+            <errorLevel type="suppress" />
+        </PossiblyUndefinedMethod>
+    </issueHandlers>
+</psalm>

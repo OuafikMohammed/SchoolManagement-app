@@ -1,0 +1,42 @@
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'novalidate': true, 'class': 'form-horizontal'}}) }}
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form_row(form.value, {'attr': {'class': 'form-control'}, 'help': 'Grade value from 0 to 20'}) }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form_row(form.coefficient, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form_row(form.student, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_row(form.course, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        {% if form_errors(form) %}
+            <div class="alert alert-danger">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{{ path('app_grade_index') }}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>

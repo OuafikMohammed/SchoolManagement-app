@@ -3,13 +3,80 @@
 {% block title %}Edit Grade{% endblock %}
 
 {% block body %}
-<h1>Edit Grade</h1>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="mb-4">
+                <h1 class="h2">Edit Grade</h1>
+                <p class="text-muted">Update grade information</p>
+            </div>
 
-{{ form_start(form) }}
-  <div class="mb-3">{{ form_row(form.value) }}</div>
-  <div class="mb-3">{{ form_row(form.type) }}</div>
-  <div class="mb-3">{{ form_row(form.coefficient) }}</div>
-  <button type="submit" class="btn btn-primary">Update Grade</button>
-  <a href="{{ path('app_grade_index') }}" class="btn btn-outline-secondary">Cancel</a>
-{{ form_end(form) }}
+            <!-- Grade Info Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><small class="text-muted">Student</small></p>
+                            <strong>{{ grade.student.name ?: grade.student.email }}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><small class="text-muted">Course</small></p>
+                            <strong>{{ grade.course.title }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Form Card -->
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': true}}) }}
+
+                    <!-- Form Fields -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="grade_value" class="form-label">Grade Value (0-20)</label>
+                            {{ form_widget(form.value, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.value.vars.help %}
+                                <small class="form-text text-muted">{{ form.value.vars.help }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="grade_type" class="form-label">Grade Type</label>
+                            {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="grade_coefficient" class="form-label">Weight (Coefficient)</label>
+                        {{ form_widget(form.coefficient, {'attr': {'class': 'form-control'}}) }}
+                        <small class="form-text text-muted">Higher coefficient = more weight in average calculation</small>
+                    </div>
+
+                    <!-- Form Errors -->
+                    {% if form.vars.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.vars.errors %}
+                                <div>{{ error.message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Update Grade
+                        </button>
+                        <a href="{{ path('app_grade_index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
