@@ -8,23 +8,28 @@ use App\Entity\User;
 use App\Repository\GradeRepository;
 use App\Service\GradeService;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GradeServiceTest extends TestCase
 {
     private GradeService $gradeService;
-    private $em;
-    private $gradeRepository;
+    /** @var MockObject&EntityManagerInterface */
+    private MockObject $em;
+    /** @var MockObject&GradeRepository */
+    private MockObject $gradeRepository;
     private User $student;
     private Course $course;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->em = $this->getMockBuilder(EntityManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->gradeRepository = $this->getMockBuilder(GradeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->gradeService = new GradeService($this->em, $this->gradeRepository);
 
         // Create test entities
@@ -154,7 +159,7 @@ class GradeServiceTest extends TestCase
     public function testGetGradesByStudentAndCourse(): void
     {
         $grades = [new Grade(), new Grade()];
-        
+
         $this->gradeRepository
             ->expects($this->once())
             ->method('findByStudentAndCourse')
@@ -172,7 +177,7 @@ class GradeServiceTest extends TestCase
     public function testGetGradesByCourse(): void
     {
         $grades = [new Grade(), new Grade(), new Grade()];
-        
+
         $this->gradeRepository
             ->expects($this->once())
             ->method('findByCourse')
@@ -206,7 +211,7 @@ class GradeServiceTest extends TestCase
     public function testGetGradesByType(): void
     {
         $grades = [new Grade(), new Grade()];
-        
+
         $this->gradeRepository
             ->expects($this->once())
             ->method('findByCourseAndType')

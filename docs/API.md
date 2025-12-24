@@ -319,20 +319,98 @@ Get student's grades.
 ### PDF Endpoints
 
 #### GET /pdf/bulletin/{courseId}
-Download grade bulletin PDF for student.
+Download grade bulletin PDF for student in specific course.
 
-**Response:** PDF file
+**Response:** PDF file (attachment)
 
-**Required Role:** ROLE_STUDENT (enrolled)
+**Required Role:** ROLE_STUDENT (must be enrolled in course)
+
+**Response Headers:**
+```
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="bulletin.pdf"
+```
+
+**Example:**
+```bash
+curl -u student0@school.test:password http://localhost:8000/pdf/bulletin/1
+```
+
+---
+
+#### GET /pdf/bulletin/{courseId}/view
+View grade bulletin PDF in browser (inline).
+
+**Response:** PDF file (inline)
+
+**Required Role:** ROLE_STUDENT (must be enrolled in course)
+
+**Response Headers:**
+```
+Content-Type: application/pdf
+Content-Disposition: inline; filename="bulletin.pdf"
+```
 
 ---
 
 #### GET /pdf/course-report/{courseId}
 Download course report PDF for teacher.
 
-**Response:** PDF file
+**Response:** PDF file (attachment) with:
+- Course title and info
+- All enrolled students with grades
+- Students ranked by average grade
+- Grade statistics
 
-**Required Role:** ROLE_TEACHER (course owner)
+**Required Role:** ROLE_TEACHER (must own course)
+
+**Response Headers:**
+```
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="course_report.pdf"
+```
+
+**Example:**
+```bash
+curl -u teacher0@school.test:password http://localhost:8000/pdf/course-report/1
+```
+
+---
+
+#### GET /pdf/course-report/{courseId}/view
+View course report PDF in browser (inline).
+
+**Response:** PDF file (inline)
+
+**Required Role:** ROLE_TEACHER (must own course)
+
+**Response Headers:**
+```
+Content-Type: application/pdf
+Content-Disposition: inline; filename="course_report.pdf"
+```
+
+---
+
+## PDF Content Format
+
+### Student Bulletin PDF
+- **Header**: Course title and student information
+- **Student Info**: Name, Email, Class Ranking
+- **Grades Table**: All grades with type, value, coefficient
+- **Summary**: Weighted average score
+- **Footer**: Generated timestamp and auto-signature
+
+### Course Report PDF
+- **Header**: Course title and report metadata
+- **Course Info**: Teacher name, total students, total grades
+- **Student Rankings**: All students sorted by average grade descending
+- **Details per Student**:
+  - Student name and email
+  - Average grade
+  - Total number of grades
+- **Statistics**: Class average, grade distribution
+- **Footer**: Generated timestamp
 
 ---
 

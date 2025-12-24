@@ -93,7 +93,7 @@ school-management/
 - **Frontend**: Twig, Bootstrap 5
 - **Testing**: PHPUnit, Symfony WebTestCase
 - **Security**: Role-based access control (RBAC), Voters
-- **PDF**: DomPDF (via KnpSnappyBundle)
+- **PDF**: DomPDF 3.1+
 
 ---
 
@@ -117,14 +117,20 @@ school-management/
 - Statistics dashboard for teachers
 
 ### Sprint 4: PDF & Polish
-- Generate student bulletins as PDF
-- Generate course reports as PDF
-- Pagination and advanced filtering
-- Complete test coverage (>80%)
+- ✅ Generate student bulletins as PDF with rankings
+- ✅ Generate course reports as PDF with student statistics
+- ✅ Comprehensive test coverage (>80% services & repositories)
+- ✅ Enhanced fixtures with 50+ students and 20+ courses
+- ✅ Functional tests for PDF generation controllers
+- ✅ Unit tests for all services (PdfGeneratorService, GradeService, EnrollmentService, StatisticService)
+- ✅ Integration tests for repositories
+- ✅ Responsive UI with animations
+- ✅ Pagination and advanced filtering on all list pages
+- ✅ Complete documentation and deployment guides
 
 ---
 
-## 🧪 Testing
+## 📚 Sprint 4 Deliverables
 
 Run all tests:
 

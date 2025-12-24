@@ -13,15 +13,17 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
-    public function __construct(private UserPasswordHasherInterface $passwordHasher) {}
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
+    {
+    }
 
     public function load(ObjectManager $manager): void
     {
         $faker = FakerFactory::create();
 
-        // Create teachers
+        // Create teachers (8 teachers)
         $teachers = [];
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $teacher = new User();
             $teacher->setEmail("teacher{$i}@school.test");
             $teacher->setName($faker->name());
@@ -32,9 +34,9 @@ class AppFixtures extends Fixture
             $teachers[] = $teacher;
         }
 
-        // Create students
+        // Create students (50 students)
         $students = [];
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $student = new User();
             $student->setEmail("student{$i}@school.test");
             $student->setName($faker->name());

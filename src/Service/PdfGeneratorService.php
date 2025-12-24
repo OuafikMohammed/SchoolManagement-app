@@ -3,16 +3,20 @@
 namespace App\Service;
 
 use App\Entity\Course;
+use App\Entity\Grade;
 use App\Entity\User;
+use App\Repository\StatisticRepository;
 use Dompdf\Dompdf;
+use Dompdf\Options;
 use Twig\Environment;
 
 class PdfGeneratorService
 {
     public function __construct(
         private Environment $twig,
-        private StatisticService $statisticService
-    ) {}
+        private StatisticRepository $statisticRepository
+    ) {
+    }
 
     /**
      * Generate a student bulletin (grade report) PDF
@@ -20,13 +24,25 @@ class PdfGeneratorService
     public function generateBulletin(User $student, Course $course): string
     {
         $grades = $course->getGrades()->filter(fn(Grade $g) => $g->getStudent() === $student);
-        $average = $this->statisticService->calculateAverageForStudentInCourse($student, $course);
+        $average = $this->statisticRepository->calculateAverageGrade($student, $course);
+        $rankedStudents = $this->statisticRepository->getRankedStudentsByCourse($course);
+
+        // Find student's rank
+        $rank = null;
+        foreach ($rankedStudents as $index => $rankedStudent) {
+            if ($rankedStudent['student_id'] === $student->getId()) {
+                $rank = $index + 1;
+                break;
+            }
+        }
 
         $html = $this->twig->render('pdf/bulletin.html.twig', [
             'student' => $student,
             'course' => $course,
             'grades' => $grades,
             'average' => $average,
+            'rank' => $rank,
+            'totalStudents' => count($rankedStudents),
             'generatedAt' => new \DateTime(),
         ]);
 
@@ -38,12 +54,12 @@ class PdfGeneratorService
      */
     public function generateCourseReport(Course $course): string
     {
-        $students = $course->getEnrollments();
+        $enrollments = $course->getEnrollments();
         $gradeDistribution = [];
 
-        foreach ($students as $enrollment) {
+        foreach ($enrollments as $enrollment) {
             $student = $enrollment->getStudent();
-            $average = $this->statisticService->calculateAverageForStudentInCourse($student, $course);
+            $average = $this->statisticRepository->calculateAverageGrade($student, $course);
             $gradeDistribution[] = [
                 'student' => $student,
                 'average' => $average,
@@ -51,9 +67,17 @@ class PdfGeneratorService
             ];
         }
 
+        // Sort by average grade (descending)
+        usort($gradeDistribution, function ($a, $b) {
+            $avgA = $a['average'] ?? 0;
+            $avgB = $b['average'] ?? 0;
+            return $avgB <=> $avgA;
+        });
+
         $html = $this->twig->render('pdf/course_report.html.twig', [
             'course' => $course,
             'gradeDistribution' => $gradeDistribution,
+            'totalStudents' => count($enrollments),
             'generatedAt' => new \DateTime(),
         ]);
 
@@ -65,7 +89,15 @@ class PdfGeneratorService
      */
     private function renderToPdf(string $html, string $filename): string
     {
-        $dompdf = new Dompdf();
+        $options = new Options();
+        $options->set([
+            'isRemoteEnabled' => false,
+            'isHtml5ParserEnabled' => true,
+            'defaultFont' => 'Helvetica',
+            'dpi' => 96,
+        ]);
+
+        $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();

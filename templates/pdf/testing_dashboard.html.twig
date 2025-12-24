@@ -1,0 +1,519 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PDF Service Testing Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h1 class="h2">
+            <i class="bi bi-file-pdf"></i> PDF Service Testing Dashboard
+        </h1>
+        <p class="text-muted">Comprehensive testing interface for PDF generation service</p>
+    </div>
+
+    <!-- Status Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Service Status</h6>
+                    <div class="mb-2">
+                        <span class="badge bg-success p-2" style="font-size: 1rem;">
+                            <i class="bi bi-check-circle"></i> Active
+                        </span>
+                    </div>
+                    <small class="text-muted">PDF Generation: OK</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">DomPDF</h6>
+                    <div class="mb-2">
+                        <span class="badge bg-info p-2" style="font-size: 1rem;">v3.1.4+</span>
+                    </div>
+                    <small class="text-muted">Library Status: Installed</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Twig Engine</h6>
+                    <div class="mb-2">
+                        <span class="badge bg-info p-2" style="font-size: 1rem;">Ready</span>
+                    </div>
+                    <small class="text-muted">Template Rendering: OK</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Routes</h6>
+                    <div class="mb-2">
+                        <span class="badge bg-info p-2" style="font-size: 1rem;">4 Endpoints</span>
+                    </div>
+                    <small class="text-muted">All Routes Registered</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Endpoints -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-diagram-3"></i> PDF Service Architecture
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="mb-3"><strong>Backend Components</strong></h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>PdfGeneratorService</strong>
+                            <br>
+                            <small class="text-muted">Location: <code>src/Service/PdfGeneratorService.php</code></small>
+                            <br>
+                            <small>• <code>generateBulletin()</code> - Student grade reports</small>
+                            <br>
+                            <small>• <code>generateCourseReport()</code> - Teacher course analysis</small>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>StatisticRepository</strong>
+                            <br>
+                            <small class="text-muted">Provides ranking & average calculations</small>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>PdfController</strong>
+                            <br>
+                            <small class="text-muted">Location: <code>src/Controller/Shared/PdfController.php</code></small>
+                            <br>
+                            <small>Routes HTTP requests to PDF generation</small>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="mb-3"><strong>Dependencies & Data Flow</strong></h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Twig Environment</strong>
+                            <br>
+                            <small>Renders PDF templates to HTML</small>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>DomPDF Library</strong>
+                            <br>
+                            <small>Converts HTML → PDF binary</small>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Database Queries</strong>
+                            <br>
+                            <small>Course, Grade, User, Enrollment repositories</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Routes -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-signpost-2"></i> Registered Routes
+            </h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Route Name</th>
+                        <th>HTTP Method</th>
+                        <th>Endpoint</th>
+                        <th>Required Role</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>pdf_student_bulletin</code></td>
+                        <td><span class="badge bg-info">GET</span></td>
+                        <td><code>/pdf/bulletin/{courseId}</code></td>
+                        <td><span class="badge bg-warning">ROLE_STUDENT</span></td>
+                        <td>Download student bulletin PDF</td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_student_bulletin_view</code></td>
+                        <td><span class="badge bg-info">GET</span></td>
+                        <td><code>/pdf/bulletin/{courseId}/view</code></td>
+                        <td><span class="badge bg-warning">ROLE_STUDENT</span></td>
+                        <td>View bulletin in browser (inline)</td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_course_report</code></td>
+                        <td><span class="badge bg-info">GET</span></td>
+                        <td><code>/pdf/course-report/{courseId}</code></td>
+                        <td><span class="badge bg-danger">ROLE_TEACHER</span></td>
+                        <td>Download course report PDF</td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_course_report_view</code></td>
+                        <td><span class="badge bg-info">GET</span></td>
+                        <td><code>/pdf/course-report/{courseId}/view</code></td>
+                        <td><span class="badge bg-danger">ROLE_TEACHER</span></td>
+                        <td>View report in browser (inline)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Frontend Integration -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-browser"></i> Frontend Integration
+            </h5>
+        </div>
+        <div class="card-body">
+            <h6 class="mb-3"><strong>How to Use PDF Features in the App</strong></h6>
+            
+            <div class="accordion mb-3" id="frontendAccordion">
+                <!-- Student Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#studentPdf">
+                            <i class="bi bi-person-check"></i> For Students - View Your Grade Bulletin
+                        </button>
+                    </h2>
+                    <div id="studentPdf" class="accordion-collapse collapse show" data-bs-parent="#frontendAccordion">
+                        <div class="accordion-body">
+                            <ol>
+                                <li>Navigate to <strong>My Grades</strong> → Select a course</li>
+                                <li>Click <strong>"Download Bulletin"</strong> button to save PDF locally</li>
+                                <li>Or click <strong>"View PDF"</strong> button to open in browser</li>
+                            </ol>
+                            <p class="mt-3 mb-0">
+                                <strong>What's included:</strong> Your grade average, ranking, all grades in that course, and course statistics.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#teacherPdf">
+                            <i class="bi bi-person-badge"></i> For Teachers - Generate Course Report
+                        </button>
+                    </h2>
+                    <div id="teacherPdf" class="accordion-collapse collapse" data-bs-parent="#frontendAccordion">
+                        <div class="accordion-body">
+                            <ol>
+                                <li>Navigate to <strong>My Courses</strong> → Click on a course</li>
+                                <li>Click <strong>"Download Report"</strong> to export comprehensive PDF report</li>
+                                <li>Or click <strong>"View Report"</strong> to preview in browser</li>
+                            </ol>
+                            <p class="mt-3 mb-0">
+                                <strong>Report Contents:</strong> All students' names, grades, averages (sorted by performance), and class statistics.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testing Guide -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-clipboard-check"></i> Manual Testing Guide
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                <strong>Test Account Credentials:</strong> Use the test accounts created in the database.
+            </div>
+
+            <h6 class="mb-3"><strong>Test Scenarios</strong></h6>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card card-outline-primary mb-3">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">Test 1: Student Bulletin PDF</h6>
+                        </div>
+                        <div class="card-body">
+                            <ol class="mb-0">
+                                <li>Login as a student</li>
+                                <li>Go to My Grades → Select enrolled course</li>
+                                <li>Click "Download Bulletin"</li>
+                                <li><strong>Expected:</strong> PDF downloads with:
+                                    <ul>
+                                        <li>Student name and email</li>
+                                        <li>Course title</li>
+                                        <li>All grades with types</li>
+                                        <li>Average score</li>
+                                        <li>Student ranking</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card card-outline-primary mb-3">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">Test 2: Course Report PDF</h6>
+                        </div>
+                        <div class="card-body">
+                            <ol class="mb-0">
+                                <li>Login as a teacher</li>
+                                <li>Go to My Courses → Select a course</li>
+                                <li>Click "Download Report"</li>
+                                <li><strong>Expected:</strong> PDF with:
+                                    <ul>
+                                        <li>Course title & info</li>
+                                        <li>All enrolled students</li>
+                                        <li>Each student's average</li>
+                                        <li>Students ranked by grade</li>
+                                        <li>Class statistics</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card card-outline-success mb-3">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">Test 3: View in Browser</h6>
+                        </div>
+                        <div class="card-body">
+                            <ol class="mb-0">
+                                <li>Instead of downloading, click "View PDF"</li>
+                                <li><strong>Expected:</strong> PDF opens inline in browser</li>
+                                <li>Should show print & save options</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card card-outline-danger mb-3">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">Test 4: Authorization</h6>
+                        </div>
+                        <div class="card-body">
+                            <ol class="mb-0">
+                                <li>Try accessing PDF of course you're NOT enrolled in</li>
+                                <li><strong>Expected:</strong> 403 Forbidden error</li>
+                                <li>Teacher can't access other teacher's reports</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Verification -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-gear"></i> Service Dependencies Verification
+            </h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Component</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>PdfGeneratorService</strong></td>
+                        <td><span class="badge bg-success">✓ Registered</span></td>
+                        <td>Injected via Symfony DI Container</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Twig Environment</strong></td>
+                        <td><span class="badge bg-success">✓ Ready</span></td>
+                        <td>PDF templates available in <code>templates/pdf/</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DomPDF Options</strong></td>
+                        <td><span class="badge bg-success">✓ Configured</span></td>
+                        <td>Remote URLs disabled for security, HTML5 parser enabled</td>
+                    </tr>
+                    <tr>
+                        <td><strong>StatisticRepository</strong></td>
+                        <td><span class="badge bg-success">✓ Injected</span></td>
+                        <td>Provides average grades and rankings</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Authentication</strong></td>
+                        <td><span class="badge bg-success">✓ Protected</span></td>
+                        <td>Routes require ROLE_STUDENT or ROLE_TEACHER</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Authorization</strong></td>
+                        <td><span class="badge bg-success">✓ Enforced</span></td>
+                        <td>Students can only view own enrolled courses</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-exclamation-triangle"></i> Troubleshooting
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="accordion" id="troubleshooting">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trouble1">
+                            PDF download returns error or blank file
+                        </button>
+                    </h2>
+                    <div id="trouble1" class="accordion-collapse collapse" data-bs-parent="#troubleshooting">
+                        <div class="accordion-body">
+                            <strong>Solution:</strong>
+                            <ul>
+                                <li>Check that DomPDF is properly installed: <code>composer require dompdf/dompdf</code></li>
+                                <li>Verify Twig templates exist in <code>templates/pdf/</code></li>
+                                <li>Check server logs for PHP errors</li>
+                                <li>Ensure course has grades before generating report</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trouble2">
+                            "403 Forbidden" when trying to access PDF
+                        </button>
+                    </h2>
+                    <div id="trouble2" class="accordion-collapse collapse" data-bs-parent="#troubleshooting">
+                        <div class="accordion-body">
+                            <strong>Solution:</strong>
+                            <ul>
+                                <li>Make sure you're enrolled in the course (for students)</li>
+                                <li>Confirm you're the course teacher (for teachers)</li>
+                                <li>Verify you have correct role (ROLE_STUDENT or ROLE_TEACHER)</li>
+                                <li>Try logging out and back in</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trouble3">
+                            PDF opens in browser but looks malformed
+                        </button>
+                    </h2>
+                    <div id="trouble3" class="accordion-collapse collapse" data-bs-parent="#troubleshooting">
+                        <div class="accordion-body">
+                            <strong>Solution:</strong>
+                            <ul>
+                                <li>Check HTML in Twig template for syntax errors</li>
+                                <li>Verify CSS is inline (PDF rendering doesn't support external stylesheets well)</li>
+                                <li>Try downloading instead of viewing inline</li>
+                                <li>Check with different PDF viewer application</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trouble4">
+                            PDF takes too long to generate
+                        </button>
+                    </h2>
+                    <div id="trouble4" class="accordion-collapse collapse" data-bs-parent="#troubleshooting">
+                        <div class="accordion-body">
+                            <strong>Solution:</strong>
+                            <ul>
+                                <li>DomPDF is resource-intensive - may take 1-5 seconds</li>
+                                <li>For large courses with many students, this is expected</li>
+                                <li>Consider caching for frequently generated reports</li>
+                                <li>Monitor server resources during generation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Testing -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-code"></i> API Testing with cURL
+            </h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">Test the PDF endpoints directly using command line:</p>
+            
+            <div class="bg-light p-3 rounded mb-3" style="overflow-x: auto;">
+                <strong>Student Bulletin (Download):</strong><br>
+                <code>curl -u student@school.test:password \<br>
+                &nbsp;&nbsp;http://localhost:8000/pdf/bulletin/1 \<br>
+                &nbsp;&nbsp;-o bulletin.pdf</code>
+            </div>
+
+            <div class="bg-light p-3 rounded mb-3" style="overflow-x: auto;">
+                <strong>Student Bulletin (View in Browser):</strong><br>
+                <code>curl -u student@school.test:password \<br>
+                &nbsp;&nbsp;http://localhost:8000/pdf/bulletin/1/view -o bulletin_view.pdf</code>
+            </div>
+
+            <div class="bg-light p-3 rounded mb-3" style="overflow-x: auto;">
+                <strong>Course Report (Download):</strong><br>
+                <code>curl -u teacher@school.test:password \<br>
+                &nbsp;&nbsp;http://localhost:8000/pdf/course-report/1 \<br>
+                &nbsp;&nbsp;-o course_report.pdf</code>
+            </div>
+
+            <div class="bg-light p-3 rounded" style="overflow-x: auto;">
+                <strong>Course Report (View in Browser):</strong><br>
+                <code>curl -u teacher@school.test:password \<br>
+                &nbsp;&nbsp;http://localhost:8000/pdf/course-report/1/view -o report_view.pdf</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-outline-primary {
+        border-left: 4px solid #0d6efd;
+    }
+    .card-outline-success {
+        border-left: 4px solid #198754;
+    }
+    .card-outline-danger {
+        border-left: 4px solid #dc3545;
+    }
+    .table-sm td, .table-sm th {
+        padding: 0.5rem;
+    }
+</style>
+{% endblock %}

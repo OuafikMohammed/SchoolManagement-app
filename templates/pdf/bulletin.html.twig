@@ -57,6 +57,9 @@
     <div class="info">
         <p><strong>Student:</strong> {{ student.name }} ({{ student.email }})</p>
         <p><strong>Course:</strong> {{ course.title }}</p>
+        {% if rank and totalStudents %}
+            <p><strong>Class Ranking:</strong> {{ rank }} / {{ totalStudents }}</p>
+        {% endif %}
         <p><strong>Generated:</strong> {{ generatedAt|date('Y-m-d H:i') }}</p>
     </div>
 

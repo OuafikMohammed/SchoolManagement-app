@@ -1,45 +1,96 @@
-## Installation & Setup
+# Installation Guide
 
-### Prerequisites
-- PHP 8.2+
-- Composer
-- MySQL 8 or PostgreSQL 15
-- Node.js 18+ (for asset compilation)
+## System Requirements
 
-### Step 1: Clone & Install Dependencies
+- **PHP**: 8.2 or higher
+- **Composer**: Latest version
+- **Node.js**: 16 or higher (for asset compilation)
+- **npm**: 7 or higher
+- **Database**: MySQL 8.0+, PostgreSQL 15+, or SQLite 3
+- **Git**: For cloning the repository
+
+## Local Development Setup
+
+### Step 1: Clone the Repository
+
 ```bash
-cd c:\Users\omrac\Desktop\my_projet
+git clone <REPOSITORY_URL>
+cd SchoolManagement-app
+```
+
+### Step 2: Install PHP Dependencies
+
+```bash
 composer install
+```
+
+This will:
+- Install all Symfony 7 packages
+- Install DomPDF for PDF generation
+- Install testing dependencies (PHPUnit)
+- Set up autoloading
+
+### Step 3: Install Node Dependencies
+
+```bash
 npm install
 ```
 
-### Step 2: Configure Environment
-Create `.env.local`:
-```env
-DATABASE_URL="mysql://root:@127.0.0.1:3306/school_management?serverVersion=8.0"
-MAILER_DSN="smtp://localhost:1025"
+This installs Bootstrap 5, Stimulus, and asset compilation tools.
+
+### Step 4: Configure Environment Variables
+
+Copy and configure the environment:
+
+```bash
+cp .env .env.local
 ```
 
-### Step 3: Create Database & Migrate
+Edit `.env.local` with your database credentials:
+
+```bash
+DATABASE_URL="mysql://root:password@127.0.0.1:3306/school_management"
+```
+
+### Step 5: Create Database & Run Migrations
+
 ```bash
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
-php bin/console doctrine:fixtures:load
 ```
 
-### Step 4: Build Assets
+### Step 6: Load Sample Data
+
+```bash
+php bin/console doctrine:fixtures:load --no-interaction
+```
+
+Loads 50 students, 8 teachers, 20 courses with 200+ grades.
+
+### Step 7: Build Assets
+
 ```bash
 npm run build
 ```
 
-### Step 5: Start Development Server
+### Step 8: Start Development Server
+
 ```bash
-php -S localhost:8000 -t public
+php -S localhost:8000 -t public/
+# or use Symfony CLI
+symfony server:start
 ```
 
-Visit: http://localhost:8000
+Visit: `http://localhost:8000`
 
-### Test Accounts (from fixtures)
+## Test Accounts
+
+After loading fixtures:
+
+**Admin:**
+- Email: `admin@school.test`
+- Password: `password`
+
 **Teacher:**
 - Email: `teacher0@school.test`
 - Password: `password`
@@ -48,6 +99,85 @@ Visit: http://localhost:8000
 - Email: `student0@school.test`
 - Password: `password`
 
+## Docker Setup
+
+```bash
+docker-compose up -d
+docker-compose exec app php bin/console doctrine:migrations:migrate
+docker-compose exec app php bin/console doctrine:fixtures:load
+```
+
+Access at `http://localhost:8080`
+
+## Running Tests
+
+```bash
+php bin/phpunit                          # All tests
+php bin/phpunit --testsuite=unit         # Unit tests
+php bin/phpunit --testsuite=functional   # Functional tests
+php bin/phpunit --testsuite=integration  # Integration tests
+```
+
+## Troubleshooting
+
+### Database Connection Error
+- Check `DATABASE_URL` in `.env.local`
+- Ensure MySQL is running: `mysql -u root -p`
+- Verify database exists: `php bin/console doctrine:database:create`
+
+### Assets not loading
+```bash
+npm run build
+php bin/console cache:clear
+```
+
+### Tests failing
+```bash
+php bin/console cache:clear --env=test
+php bin/phpunit tests/Unit/Service/GradeServiceTest.php
+```
+
+### Permission issues
+```bash
+chmod -R 777 var/
+```
+
+## Production Deployment
+
+1. Install without dev dependencies:
+
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+2. Set production environment:
+
+```bash
+APP_ENV=prod
+APP_DEBUG=false
+```
+
+3. Clear and warm cache:
+
+```bash
+php bin/console cache:clear --env=prod
+php bin/console cache:warmup --env=prod
+```
+
+4. Build assets:
+
+```bash
+npm run build
+```
+
+5. Set proper permissions:
+
+```bash
+chmod -R 755 public/
+chmod -R 777 var/log var/cache
+```
+
+See [README.md](../README.md) for more details.
 **Admin:**
 - Email: `admin@school.test`
 - Password: `password`

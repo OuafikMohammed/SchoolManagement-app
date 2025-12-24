@@ -4,6 +4,7 @@ namespace App\Controller\Student;
 
 use App\Entity\Course;
 use App\Repository\GradeRepository;
+use App\Repository\EnrollmentRepository;
 use App\Service\StatisticService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,7 @@ class GradeController extends AbstractController
         private GradeRepository $gradeRepository,
         private StatisticService $statisticService,
         private EntityManagerInterface $em,
+        private EnrollmentRepository $enrollmentRepository,
     ) {
     }
 
@@ -72,8 +74,7 @@ class GradeController extends AbstractController
         }
 
         // Check if student is enrolled in this course
-        $enrollment = $this->em->getRepository(\App\Entity\Enrollment::class)
-            ->findEnrollment($student, $course);
+        $enrollment = $this->enrollmentRepository->findEnrollment($student, $course);
 
         if (!$enrollment) {
             throw $this->createAccessDeniedException('You are not enrolled in this course');

@@ -13,9 +13,17 @@
                     <p class="text-muted">Taught by {{ course.teacher.name ?: course.teacher.email }}</p>
                 {% endif %}
             </div>
-            <a href="{{ path('app_student_grades') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Back to Grades
-            </a>
+            <div class="btn-group" role="group">
+                <a href="{{ path('pdf_student_bulletin', {courseId: course.id}) }}" class="btn btn-primary" title="Download PDF Bulletin">
+                    <i class="bi bi-file-pdf"></i> Download Bulletin
+                </a>
+                <a href="{{ path('pdf_student_bulletin_view', {courseId: course.id}) }}" class="btn btn-outline-primary" title="View PDF in Browser">
+                    <i class="bi bi-eye"></i> View PDF
+                </a>
+                <a href="{{ path('app_student_grades') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
         </div>
     </div>
 

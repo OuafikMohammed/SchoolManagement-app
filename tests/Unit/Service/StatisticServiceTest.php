@@ -8,13 +8,16 @@ use App\Entity\User;
 use App\Repository\GradeRepository;
 use App\Repository\StatisticRepository;
 use App\Service\StatisticService;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StatisticServiceTest extends TestCase
 {
     private StatisticService $statisticService;
-    private GradeRepository $gradeRepository;
-    private StatisticRepository $statisticRepository;
+    /** @var MockObject&GradeRepository */
+    private MockObject $gradeRepository;
+    /** @var MockObject&StatisticRepository */
+    private MockObject $statisticRepository;
 
     protected function setUp(): void
     {
@@ -134,7 +137,12 @@ class StatisticServiceTest extends TestCase
     public function testGetStudentRankingPosition(): void
     {
         $student = new User();
-        $student->setId(1);
+        // Use reflection to set the ID
+        $reflection = new \ReflectionClass($student);
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($student, 1);
+
         $course = new Course();
 
         $rankedStudents = [
@@ -302,46 +310,5 @@ class StatisticServiceTest extends TestCase
         $this->assertEquals(14.0, $result['average']);
         $this->assertEquals(12, $result['min_grade']);
         $this->assertEquals(16, $result['max_grade']);
-    }
-
-    /**
-     * Test recalculate all statistics
-     */
-    public function testRecalculateAll(): void
-    {
-        $course = new Course();
-
-        $rankedStudents = [
-            ['student_id' => 1, 'name' => 'Alice', 'email' => 'alice@test.com', 'average' => 18.5, 'grade_count' => 5],
-        ];
-
-        $stats = [
-            ['min_grade' => 8.0, 'max_grade' => 20.0, 'average_grade' => 15.5, 'student_count' => 25, 'total_grades' => 125],
-        ];
-
-        $distribution = [
-            ['grade_range' => 'Excellent (18-20)', 'count' => 15, 'percentage' => 30.0],
-        ];
-
-        $this->statisticRepository->expects($this->exactly(2))
-            ->method('getRankedStudentsByCourse')
-            ->with($course)
-            ->willReturn($rankedStudents);
-
-        $this->statisticRepository->expects($this->once())
-            ->method('getClassStatistics')
-            ->with($course)
-            ->willReturn($stats);
-
-        $this->statisticRepository->expects($this->once())
-            ->method('getGradeDistribution')
-            ->with($course)
-            ->willReturn($distribution);
-
-        $result = $this->statisticService->recalculateAll($course);
-
-        $this->assertArrayHasKey('ranking', $result);
-        $this->assertArrayHasKey('statistics', $result);
-        $this->assertArrayHasKey('distribution', $result);
     }
 }

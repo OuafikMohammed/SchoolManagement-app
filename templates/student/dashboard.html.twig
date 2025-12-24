@@ -28,10 +28,16 @@
               <td>{{ enrollment.course.teacher.name }}</td>
               <td>{{ enrollment.enrolledAt|date('Y-m-d') }}</td>
               <td>
-                <form method="POST" action="{{ path('app_enrollment_drop', {courseId: enrollment.course.id}) }}" style="display:inline;">
-                  <input type="hidden" name="_token" value="{{ csrf_token('drop' ~ enrollment.course.id) }}">
-                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Drop this course?')">Drop</button>
-                </form>
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="{{ path('app_student_grades_course', {courseId: enrollment.course.id}) }}" class="btn btn-outline-primary">Grades</a>
+                  <a href="{{ path('pdf_student_bulletin', {courseId: enrollment.course.id}) }}" class="btn btn-outline-success pdf-download-student" data-course="{{ enrollment.course.title }}" title="Download Bulletin">
+                    <i class="bi bi-download"></i> Bulletin
+                  </a>
+                  <form method="POST" action="{{ path('app_enrollment_drop', {courseId: enrollment.course.id}) }}" style="display:inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('drop' ~ enrollment.course.id) }}">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Drop this course?')">Drop</button>
+                  </form>
+                </div>
               </td>
             </tr>
           {% endfor %}
@@ -42,4 +48,58 @@
     {% endif %}
   </div>
 </div>
+
+<style>
+    .pdf-download-student {
+        transition: all 0.3s ease;
+    }
+    
+    .pdf-download-student:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const pdfButtons = document.querySelectorAll('.pdf-download-student');
+        
+        pdfButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const courseName = this.getAttribute('data-course');
+                
+                // Show loading state
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                this.disabled = true;
+                
+                // Set timeout to restore button
+                setTimeout(() => {
+                    this.innerHTML = originalHtml;
+                    this.disabled = false;
+                    
+                    // Show toast notification
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'position-fixed bottom-0 end-0 m-3 alert alert-success alert-dismissible fade show';
+                    alertDiv.role = 'alert';
+                    alertDiv.style.zIndex = '9999';
+                    alertDiv.innerHTML = `
+                        <i class="bi bi-check-circle"></i>
+                        <strong>Downloading</strong> bulletin for "${courseName}"
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    document.body.appendChild(alertDiv);
+                    
+                    // Auto-dismiss after 5 seconds
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.remove();
+                        }
+                    }, 5000);
+                }, 1500);
+            });
+        });
+    });
+</script>
 {% endblock %}
