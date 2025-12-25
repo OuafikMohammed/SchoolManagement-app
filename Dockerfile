@@ -11,7 +11,7 @@ RUN apk add --no-cache \
     libzip-dev \
     libpng-dev \
     libjpeg-turbo-dev \
-    libfreetype6-dev \
+    freetype-dev \
     icu-dev \
     oniguruma-dev
 
@@ -47,7 +47,7 @@ RUN apk add --no-cache \
     libzip \
     libpng \
     libjpeg-turbo \
-    libfreetype6 \
+    freetype \
     icu
 
 # Install PHP extensions
