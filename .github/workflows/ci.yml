@@ -31,8 +31,9 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        extensions: mysql, intl, zip, gd
+        extensions: mysql, intl, zip, gd, pdo_mysql
         coverage: xdebug
+        tools: composer:v2
 
     - name: Cache Composer packages
       id: composer-cache
@@ -44,18 +45,21 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress --no-interaction
+
+    - name: Copy .env.test file
+      run: cp .env.test .env.test.local
 
     - name: Setup Database
+      env:
+        DATABASE_URL: mysql://root:root@127.0.0.1:3306/school_test
       run: |
-        php bin/console doctrine:database:create --env=test || true
+        php bin/console doctrine:database:create --env=test --if-not-exists
         php bin/console doctrine:migrations:migrate --env=test --no-interaction
 
     - name: Run Tests
+      env:
+        DATABASE_URL: mysql://root:root@127.0.0.1:3306/school_test
       run: php bin/phpunit --testdox
 
-    - name: Code Style (PHP CS Fixer)
-      run: composer cs-check || true
-
-    - name: Static Analysis (PHPStan)
-      run: composer stan || true
+    - name: Code Style Check (PHP CS Fixer)
