@@ -12,23 +12,24 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class PdfControllerTest extends WebTestCase
 {
-    private static bool $schemaInitialized = false;
+    private bool $schemaInitialized = false;
 
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
-        parent::setUpBeforeClass();
-        self::initializeDatabase();
+        parent::setUp();
+
+        if (!$this->schemaInitialized) {
+            $this->initializeDatabase();
+            $this->schemaInitialized = true;
+        }
     }
 
-    private static function initializeDatabase(): void
+    private function initializeDatabase(): void
     {
-        if (self::$schemaInitialized) {
-            return;
-        }
-
         try {
-            $kernel = self::bootKernel();
-            $em = self::getContainer()->get(EntityManagerInterface::class);
+            // Use createClient to boot kernel properly
+            $client = static::createClient();
+            $em = static::getContainer()->get(EntityManagerInterface::class);
             $connection = $em->getConnection();
 
             // Drop and recreate all tables
@@ -48,26 +49,13 @@ class PdfControllerTest extends WebTestCase
             $schemaTool = new SchemaTool($em);
             $metadata = $em->getMetadataFactory()->getAllMetadata();
             $schemaTool->createSchema($metadata);
-
-            self::$schemaInitialized = true;
-            self::ensureKernelShutdown();
         } catch (\Exception $e) {
             // Schema already exists or error, continue anyway
-            self::$schemaInitialized = true;
-        }
-    }
-
-    private function ensureSchemaInitialized(): void
-    {
-        if (!self::$schemaInitialized) {
-            self::initializeDatabase();
         }
     }
 
     public function testStudentBulletinPdfGeneration(): void
     {
-        $this->ensureSchemaInitialized();
-
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
@@ -124,8 +112,6 @@ class PdfControllerTest extends WebTestCase
 
     public function testStudentBulletinNotEnrolled(): void
     {
-        $this->ensureSchemaInitialized();
-
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
@@ -164,8 +150,6 @@ class PdfControllerTest extends WebTestCase
 
     public function testCourseReportPdfGeneration(): void
     {
-        $this->ensureSchemaInitialized();
-
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
@@ -197,8 +181,6 @@ class PdfControllerTest extends WebTestCase
 
     public function testCourseReportNotTeacher(): void
     {
-        $this->ensureSchemaInitialized();
-
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
@@ -237,8 +219,6 @@ class PdfControllerTest extends WebTestCase
 
     public function testCourseReportNotYourCourse(): void
     {
-        $this->ensureSchemaInitialized();
-
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
