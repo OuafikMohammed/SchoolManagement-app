@@ -31,8 +31,8 @@
         <server name="APP_DEBUG" value="false" force="true" />
         <server name="KERNEL_CLASS" value="App\Kernel" />
         
-        <!-- Database Configuration: SQLite in-memory for fast tests -->
-        <server name="DATABASE_URL" value="sqlite:///:memory:" force="true" />
+        <!-- Database Configuration: SQLite file-based for persistent test database -->
+        <server name="DATABASE_URL" value="sqlite:///%kernel.project_dir%/var/data/test.db" force="true" />
         
         <!-- API Base URL for functional tests -->
         <server name="DEFAULT_URI" value="http://localhost" force="true" />
@@ -103,14 +103,11 @@
     <coverage pathCoverage="false"
               ignoreDeprecatedCodeUnits="true"
     >
-        <!-- Text Report: Console output -->
-        <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="false" />
-        
-        <!-- HTML Report: Detailed visual coverage -->
-        <html outputDirectory="var/coverage/html" />
-        
-        <!-- Clover Report: CI/CD integration (Codecov, etc.) -->
-        <clover outputFile="var/coverage/clover.xml" />
+        <report>
+            <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="false" />
+            <html outputDirectory="var/coverage/html" />
+            <clover outputFile="var/coverage/clover.xml" />
+        </report>
     </coverage>
 
     <!-- ========================================================================

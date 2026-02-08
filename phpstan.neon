@@ -41,12 +41,6 @@ parameters:
         - config/
 
     # ========================================================================
-    # Bootstrap File: Loaded before analysis
-    # ========================================================================
-    bootstrap:
-        - config/bootstrap.php
-
-    # ========================================================================
     # Type Checking Features
     # ========================================================================
     checkAlwaysTrueCheckTypeFunctionCall: true
@@ -54,12 +48,6 @@ parameters:
     checkDynamicProperties: true
     checkMissingIterableValueType: true
     checkMissingCallableSignature: true
-    checkMissingReturnTypeWhenInheritingMixin: true
-
-    # ========================================================================
-    # Memory and Performance
-    # ========================================================================
-    memoryLimit: 1G
 
     # ========================================================================
     # Error Output Format: GitHub Actions integration
@@ -71,12 +59,6 @@ parameters:
     # ========================================================================
     inferPrivatePropertyTypeFromConstructor: true
     treatPhpDocTypesAsCertain: true
-    disableMixedTypeInference: false
-
-    # ========================================================================
-    # Generics and Template Types
-    # ========================================================================
-    enableYAMLPhpDocParser: true
 
     # ========================================================================
     # Symfony Extension Configuration
@@ -101,12 +83,6 @@ parameters:
         - Throwable
 
     # ========================================================================
-    # Dynamic Method Calls
-    # Consider certain patterns as dynamic
-    # ========================================================================
-    dynamicConstantNames: []
-
-    # ========================================================================
     # Ignored Errors: Practical allowances for production code
     # ========================================================================
     ignoreErrors:
@@ -124,17 +100,3 @@ parameters:
         - '#Access to an undefined property.*::\$__initializer__#'
         - '#Access to an undefined property.*::\$__cloner__#'
         - '#Access to an undefined property.*::\$__isInitialized__#'
-
-    # ========================================================================
-    # PHPDoc Parsing
-    # ========================================================================
-    parsePrivatePropertiesDocComment: true
-    parseProtectedPropertiesDocComment: true
-
-    # ========================================================================
-    # Strictness Settings
-    # ========================================================================
-    implicitThrows: true
-    propertyLazyAssertionHelper: true
-    checkImplicitMixed: true
-    checkExplicitMixedMissingReturn: true
