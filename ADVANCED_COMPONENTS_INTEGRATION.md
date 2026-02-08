@@ -9,7 +9,7 @@ Complete step-by-step instructions for integrating advanced components into your
 - Tailwind CSS 3.0 or higher
 - Asset Mapper configured
 
-## Installation Steps
+## Installation Steps45[p]
 
 ### Step 1: File Organization
 
