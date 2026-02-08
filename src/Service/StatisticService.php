@@ -17,16 +17,17 @@ class StatisticService
     }
 
     /**
-     * Calculate average grade for a student in a course (weighted by coefficient)
+     * Calculate average grade for a student in a course (weighted by coefficient).
      */
     public function calculateAverageForStudentInCourse(User $student, Course $course): float
     {
         $average = $this->statisticRepository->calculateAverageGrade($student, $course);
+
         return $average ?? 0;
     }
 
     /**
-     * Calculate overall average for a student across all courses
+     * Calculate overall average for a student across all courses.
      */
     public function calculateOverallAverage(User $student): float
     {
@@ -49,12 +50,12 @@ class StatisticService
     }
 
     /**
-     * Get course ranking (students sorted by average grade)
+     * Get course ranking (students sorted by average grade).
      */
     public function getCourseRanking(Course $course): array
     {
         $rankedStudents = $this->statisticRepository->getRankedStudentsByCourse($course);
-        
+
         $ranking = [];
         $rank = 1;
         foreach ($rankedStudents as $student) {
@@ -72,12 +73,12 @@ class StatisticService
     }
 
     /**
-     * Get student's ranking position in a course
+     * Get student's ranking position in a course.
      */
     public function getStudentRankingPosition(User $student, Course $course): ?array
     {
         $ranking = $this->getCourseRanking($course);
-        
+
         foreach ($ranking as $entry) {
             if ($entry['student_id'] === $student->getId()) {
                 return $entry;
@@ -88,22 +89,22 @@ class StatisticService
     }
 
     /**
-     * Get grades by type (exam, homework, etc)
+     * Get grades by type (exam, homework, etc).
      */
     public function getGradesByType(User $student, Course $course, string $type): array
     {
         $grades = $this->gradeRepository->findByStudentAndCourse($student, $course);
 
-        return array_filter($grades, fn($g) => $g->getType() === $type);
+        return array_filter($grades, fn ($g) => $g->getType() === $type);
     }
 
     /**
-     * Get average grades grouped by type for a student in a course
+     * Get average grades grouped by type for a student in a course.
      */
     public function getAveragesByType(User $student, Course $course): array
     {
         $typeAverages = $this->statisticRepository->getAveragesByType($student, $course);
-        
+
         $result = [];
         foreach ($typeAverages as $typeAvg) {
             $result[$typeAvg['type']] = [
@@ -116,12 +117,12 @@ class StatisticService
     }
 
     /**
-     * Get class statistics for a course
+     * Get class statistics for a course.
      */
     public function getClassStatistics(Course $course): array
     {
         $stats = $this->statisticRepository->getClassStatistics($course);
-        
+
         if (empty($stats) || !$stats[0]) {
             return [
                 'min_grade' => 0,
@@ -142,7 +143,7 @@ class StatisticService
     }
 
     /**
-     * Get grade distribution in a course
+     * Get grade distribution in a course.
      */
     public function getGradeDistribution(Course $course): array
     {
@@ -150,12 +151,12 @@ class StatisticService
     }
 
     /**
-     * Get student progress statistics
+     * Get student progress statistics.
      */
     public function getStudentProgress(User $student, Course $course): array
     {
         $grades = $this->gradeRepository->findByStudentAndCourse($student, $course);
-        
+
         if (empty($grades)) {
             return [
                 'total_grades' => 0,
@@ -166,9 +167,9 @@ class StatisticService
             ];
         }
 
-        $values = array_map(fn($g) => $g->getValue(), $grades);
+        $values = array_map(fn ($g) => $g->getValue(), $grades);
         $average = $this->calculateAverageForStudentInCourse($student, $course);
-        
+
         // Calculate trend (last 3 grades average vs first 3 grades average)
         $trend = null;
         if (count($grades) >= 6) {
@@ -189,7 +190,7 @@ class StatisticService
     }
 
     /**
-     * Recalculate all statistics (useful for caching or batch updates)
+     * Recalculate all statistics (useful for caching or batch updates).
      */
     public function recalculateAll(Course $course): array
     {
@@ -200,4 +201,3 @@ class StatisticService
         ];
     }
 }
-

@@ -2,7 +2,6 @@
 
 namespace App\Controller\Student;
 
-use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Service\EnrollmentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,10 +29,11 @@ class EnrollmentController extends AbstractController
         int $courseId,
         CourseRepository $courseRepository,
         EnrollmentService $enrollmentService,
-        Request $request
+        Request $request,
     ): Response {
         if (!$this->isCsrfTokenValid('enroll'.$courseId, $request->request->get('_token'))) {
             $this->addFlash('error', 'Invalid request');
+
             return $this->redirectToRoute('app_enrollment_available');
         }
 
@@ -57,10 +57,11 @@ class EnrollmentController extends AbstractController
         int $courseId,
         CourseRepository $courseRepository,
         EnrollmentService $enrollmentService,
-        Request $request
+        Request $request,
     ): Response {
         if (!$this->isCsrfTokenValid('drop'.$courseId, $request->request->get('_token'))) {
             $this->addFlash('error', 'Invalid request');
+
             return $this->redirectToRoute('app_student_dashboard');
         }
 

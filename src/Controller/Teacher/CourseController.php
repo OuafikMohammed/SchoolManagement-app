@@ -39,6 +39,7 @@ class CourseController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Course created successfully!');
+
             return $this->redirectToRoute('app_course_index');
         }
 
@@ -69,6 +70,7 @@ class CourseController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Course updated successfully!');
+
             return $this->redirectToRoute('app_course_show', ['id' => $course->getId()]);
         }
 

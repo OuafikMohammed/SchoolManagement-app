@@ -33,10 +33,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'student', targetEntity: \App\Entity\Enrollment::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'student', targetEntity: Enrollment::class, cascade: ['persist', 'remove'])]
     private Collection $enrollments;
 
-    #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: \App\Entity\Course::class)]
+    #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: Course::class)]
     private Collection $courses;
 
     public function __construct()
@@ -117,13 +117,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /** @return Collection|\App\Entity\Enrollment[] */
+    /** @return Collection|Enrollment[] */
     public function getEnrollments(): Collection
     {
         return $this->enrollments;
     }
 
-    /** @return Collection|\App\Entity\Course[] */
+    /** @return Collection|Course[] */
     public function getCourses(): Collection
     {
         return $this->courses;

@@ -5,11 +5,11 @@ namespace App\Controller\Teacher;
 use App\Entity\Course;
 use App\Repository\GradeRepository;
 use App\Service\StatisticService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/teacher/statistics')]
 #[IsGranted('ROLE_TEACHER')]
@@ -23,7 +23,7 @@ class StatisticController extends AbstractController
     }
 
     /**
-     * Display statistics overview for all teacher's courses
+     * Display statistics overview for all teacher's courses.
      */
     #[Route('', name: 'app_statistic_index')]
     public function index(): Response
@@ -49,7 +49,7 @@ class StatisticController extends AbstractController
         }
 
         // Sort by grade count
-        usort($courseStats, fn($a, $b) => $b['gradeCount'] <=> $a['gradeCount']);
+        usort($courseStats, fn ($a, $b) => $b['gradeCount'] <=> $a['gradeCount']);
 
         return $this->render('teacher/statistic/index.html.twig', [
             'courseStats' => $courseStats,
@@ -57,7 +57,7 @@ class StatisticController extends AbstractController
     }
 
     /**
-     * Display detailed statistics for a specific course
+     * Display detailed statistics for a specific course.
      */
     #[Route('/course/{courseId}', name: 'app_statistic_course')]
     public function course(int $courseId): Response
@@ -83,7 +83,7 @@ class StatisticController extends AbstractController
     }
 
     /**
-     * Display detailed statistics for a specific student
+     * Display detailed statistics for a specific student.
      */
     #[Route('/student/{studentId}/course/{courseId}', name: 'app_statistic_student_course')]
     public function studentCourse(int $studentId, int $courseId): Response
@@ -111,7 +111,7 @@ class StatisticController extends AbstractController
     }
 
     /**
-     * Export statistics as JSON
+     * Export statistics as JSON.
      */
     #[Route('/course/{courseId}/export', name: 'app_statistic_export')]
     public function export(int $courseId): Response
@@ -140,9 +140,8 @@ class StatisticController extends AbstractController
 
         $response = new Response(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Content-Disposition', 'attachment; filename="statistics_' . $course->getId() . '.json"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="statistics_'.$course->getId().'.json"');
 
         return $response;
     }
 }
-

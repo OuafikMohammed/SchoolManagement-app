@@ -4,9 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Course;
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 
 class StatisticRepository
 {
@@ -16,7 +14,7 @@ class StatisticRepository
     }
 
     /**
-     * Calculate average grade for a student in a course (weighted by coefficient)
+     * Calculate average grade for a student in a course (weighted by coefficient).
      */
     public function calculateAverageGrade(User $student, Course $course): ?float
     {
@@ -37,7 +35,7 @@ class StatisticRepository
     }
 
     /**
-     * Get all students in a course ranked by average grade
+     * Get all students in a course ranked by average grade.
      */
     public function getRankedStudentsByCourse(Course $course): array
     {
@@ -64,7 +62,7 @@ class StatisticRepository
     }
 
     /**
-     * Get average grades by type for a student in a course
+     * Get average grades by type for a student in a course.
      */
     public function getAveragesByType(User $student, Course $course): array
     {
@@ -88,7 +86,7 @@ class StatisticRepository
     }
 
     /**
-     * Get class statistics for a course
+     * Get class statistics for a course.
      */
     public function getClassStatistics(Course $course): array
     {
@@ -111,7 +109,7 @@ class StatisticRepository
     }
 
     /**
-     * Get distribution of grades in a course
+     * Get distribution of grades in a course.
      */
     public function getGradeDistribution(Course $course): array
     {
@@ -146,7 +144,7 @@ class StatisticRepository
     }
 
     /**
-     * Get student's ranking in a course
+     * Get student's ranking in a course.
      */
     public function getStudentRankingInCourse(User $student, Course $course): array
     {
@@ -180,4 +178,3 @@ class StatisticRepository
         ])->fetchAllAssociative();
     }
 }
-

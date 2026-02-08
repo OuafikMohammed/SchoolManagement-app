@@ -41,6 +41,7 @@ class ProfileController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Profile updated successfully!');
+
             return $this->redirectToRoute('app_profile');
         }
 
@@ -50,4 +51,3 @@ class ProfileController extends AbstractController
         ]);
     }
 }
-

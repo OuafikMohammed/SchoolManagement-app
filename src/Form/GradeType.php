@@ -2,9 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Course;
 use App\Entity\Grade;
 use App\Entity\User;
-use App\Entity\Course;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -12,10 +12,10 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
-use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\Range;
 
 class GradeType extends AbstractType
 {
@@ -75,7 +75,7 @@ class GradeType extends AbstractType
             ])
             ->add('student', EntityType::class, [
                 'class' => User::class,
-                'choice_label' => function(User $user) {
+                'choice_label' => function (User $user) {
                     return $user->getName() ?: $user->getEmail();
                 },
                 'label' => 'Student',
@@ -87,7 +87,7 @@ class GradeType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'query_builder' => function($repo) {
+                'query_builder' => function ($repo) {
                     return $repo->createQueryBuilder('u')
                         ->where('u.roles NOT LIKE :admin')
                         ->setParameter('admin', '%ROLE_ADMIN%')
@@ -106,7 +106,7 @@ class GradeType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'query_builder' => function($repo) {
+                'query_builder' => function ($repo) {
                     return $repo->createQueryBuilder('c')
                         ->orderBy('c.title', 'ASC');
                 },

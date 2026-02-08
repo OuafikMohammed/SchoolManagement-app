@@ -23,7 +23,7 @@ class AppFixtures extends Fixture
 
         // Create teachers (8 teachers)
         $teachers = [];
-        for ($i = 0; $i < 8; $i++) {
+        for ($i = 0; $i < 8; ++$i) {
             $teacher = new User();
             $teacher->setEmail("teacher{$i}@school.test");
             $teacher->setName($faker->name());
@@ -36,7 +36,7 @@ class AppFixtures extends Fixture
 
         // Create students (50 students)
         $students = [];
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 50; ++$i) {
             $student = new User();
             $student->setEmail("student{$i}@school.test");
             $student->setName($faker->name());
@@ -117,7 +117,7 @@ class AppFixtures extends Fixture
         foreach ($enrollments as $enrollment) {
             $numGrades = $faker->numberBetween(4, 8);
 
-            for ($i = 0; $i < $numGrades; $i++) {
+            for ($i = 0; $i < $numGrades; ++$i) {
                 $grade = new Grade();
                 $grade->setStudent($enrollment->getStudent());
                 $grade->setCourse($enrollment->getCourse());

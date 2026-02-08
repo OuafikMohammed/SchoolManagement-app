@@ -17,7 +17,7 @@ class GradeVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         // ADD permission works on Course objects, others work on Grade objects
-        if ($attribute === self::ADD) {
+        if (self::ADD === $attribute) {
             // Subject should be a Course for ADD operations
             return true;
         }
@@ -42,7 +42,7 @@ class GradeVoter extends Voter
         }
 
         // Handle ADD permission on Course
-        if ($attribute === self::ADD) {
+        if (self::ADD === $attribute) {
             return $this->canAdd($subject, $user);
         }
 

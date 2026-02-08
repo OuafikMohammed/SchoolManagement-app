@@ -3,14 +3,14 @@
 namespace App\Controller\Student;
 
 use App\Entity\Course;
-use App\Repository\GradeRepository;
 use App\Repository\EnrollmentRepository;
+use App\Repository\GradeRepository;
 use App\Service\StatisticService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/student/grades', name: 'app_student_')]
 #[IsGranted('ROLE_STUDENT')]
@@ -25,7 +25,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * View all my grades and statistics
+     * View all my grades and statistics.
      */
     #[Route('', name: 'grades')]
     public function myGrades(): Response
@@ -51,7 +51,7 @@ class GradeController extends AbstractController
         }
 
         // Sort by average grade (highest first)
-        usort($courseGrades, fn($a, $b) => $b['average'] <=> $a['average']);
+        usort($courseGrades, fn ($a, $b) => $b['average'] <=> $a['average']);
 
         return $this->render('student/grade/my_grades.html.twig', [
             'enrollments' => $enrollments,
@@ -61,7 +61,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * View grades for a specific course
+     * View grades for a specific course.
      */
     #[Route('/course/{courseId}', name: 'grades_course')]
     public function courseGrades(int $courseId): Response
@@ -97,7 +97,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * View overall statistics
+     * View overall statistics.
      */
     #[Route('/statistics', name: 'statistics')]
     public function statistics(): Response
@@ -122,7 +122,7 @@ class GradeController extends AbstractController
         }
 
         // Sort by average (highest first)
-        usort($courseStats, fn($a, $b) => $b['average'] <=> $a['average']);
+        usort($courseStats, fn ($a, $b) => $b['average'] <=> $a['average']);
 
         return $this->render('student/statistic/my_stats.html.twig', [
             'courseStats' => $courseStats,
@@ -131,4 +131,3 @@ class GradeController extends AbstractController
         ]);
     }
 }
-

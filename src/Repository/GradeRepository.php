@@ -19,7 +19,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all grades for a student
+     * Find all grades for a student.
      */
     public function findByStudent(User $student): array
     {
@@ -32,7 +32,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all grades in a course
+     * Find all grades in a course.
      */
     public function findByCourse(Course $course): array
     {
@@ -45,7 +45,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find grades for a student in a course
+     * Find grades for a student in a course.
      */
     public function findByStudentAndCourse(User $student, Course $course): array
     {
@@ -60,7 +60,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find grades by type in a course
+     * Find grades by type in a course.
      */
     public function findByCourseAndType(Course $course, string $type): array
     {
@@ -75,7 +75,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find average grade for a student in a course with weighted coefficient
+     * Find average grade for a student in a course with weighted coefficient.
      */
     public function findAverageByStudentAndCourse(User $student, Course $course): ?float
     {
@@ -88,11 +88,11 @@ class GradeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
 
-        return $result['average'] !== null ? (float) $result['average'] : null;
+        return null !== $result['average'] ? (float) $result['average'] : null;
     }
 
     /**
-     * Find all students in a course with their average grades
+     * Find all students in a course with their average grades.
      */
     public function findStudentsWithAveragesByCourse(Course $course): array
     {
@@ -107,7 +107,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Count total grades for a student in a course
+     * Count total grades for a student in a course.
      */
     public function countByStudentAndCourse(User $student, Course $course): int
     {
@@ -122,7 +122,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all grades in a course grouped by student
+     * Find all grades in a course grouped by student.
      */
     public function findByCourseGroupedByStudent(Course $course): array
     {
@@ -136,7 +136,7 @@ class GradeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Delete all grades for a student in a course
+     * Delete all grades for a student in a course.
      */
     public function deleteByStudentAndCourse(User $student, Course $course): int
     {

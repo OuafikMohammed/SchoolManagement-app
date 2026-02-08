@@ -28,7 +28,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * List all grades for courses taught by the teacher
+     * List all grades for courses taught by the teacher.
      */
     #[Route('', name: 'app_grade_index', methods: ['GET'])]
     public function index(Request $request): Response
@@ -59,7 +59,7 @@ class GradeController extends AbstractController
             }
 
             if ($typeFilter && !empty($courseGrades)) {
-                $courseGrades = array_filter($courseGrades, fn($g) => $g->getType() === $typeFilter);
+                $courseGrades = array_filter($courseGrades, fn ($g) => $g->getType() === $typeFilter);
             }
 
             $grades = array_merge($grades, $courseGrades);
@@ -67,13 +67,13 @@ class GradeController extends AbstractController
 
         // Sort grades
         usort($grades, match ($sortBy) {
-            'student' => fn($a, $b) => strcmp(
+            'student' => fn ($a, $b) => strcmp(
                 $a->getStudent()?->getName() ?? $a->getStudent()?->getEmail() ?? '',
                 $b->getStudent()?->getName() ?? $b->getStudent()?->getEmail() ?? ''
             ),
-            'value' => fn($a, $b) => $b->getValue() <=> $a->getValue(),
-            'type' => fn($a, $b) => strcmp($a->getType(), $b->getType()),
-            default => fn($a, $b) => $b->getCreatedAt() <=> $a->getCreatedAt(),
+            'value' => fn ($a, $b) => $b->getValue() <=> $a->getValue(),
+            'type' => fn ($a, $b) => strcmp($a->getType(), $b->getType()),
+            default => fn ($a, $b) => $b->getCreatedAt() <=> $a->getCreatedAt(),
         });
 
         return $this->render('teacher/grade/index.html.twig', [
@@ -89,7 +89,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * Add a new grade to a course
+     * Add a new grade to a course.
      */
     #[Route('/add', name: 'app_grade_add', methods: ['GET', 'POST'])]
     #[Route('/course/{courseId}/add', name: 'app_grade_add_course', methods: ['GET', 'POST'])]
@@ -130,6 +130,7 @@ class GradeController extends AbstractController
                 $grade->getStudent()->getName() ?? $grade->getStudent()->getEmail(),
                 $grade->getCourse()->getTitle()
             ));
+
             return $this->redirectToRoute('app_grade_index');
         }
 
@@ -140,7 +141,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * Edit an existing grade
+     * Edit an existing grade.
      */
     #[Route('/{id}/edit', name: 'app_grade_edit', methods: ['GET', 'POST'])]
     public function edit(
@@ -167,6 +168,7 @@ class GradeController extends AbstractController
                 $grade->getValue(),
                 $grade->getStudent()->getName() ?? $grade->getStudent()->getEmail()
             ));
+
             return $this->redirectToRoute('app_grade_index');
         }
 
@@ -177,7 +179,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * Delete a grade (POST only)
+     * Delete a grade (POST only).
      */
     #[Route('/{id}/delete', name: 'app_grade_delete', methods: ['POST'])]
     public function delete(
@@ -186,7 +188,7 @@ class GradeController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('DELETE', $grade);
 
-        if ($this->isCsrfTokenValid('delete' . $grade->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$grade->getId(), $request->request->get('_token'))) {
             $studentName = $grade->getStudent()->getName() ?? $grade->getStudent()->getEmail();
             $this->gradeService->deleteGrade($grade);
             $this->addFlash('success', sprintf('Grade deleted for %s', $studentName));
@@ -198,7 +200,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * View grades for a specific course with statistics
+     * View grades for a specific course with statistics.
      */
     #[Route('/course/{id}/view', name: 'app_grade_course_view', methods: ['GET'])]
     public function viewCourse(Course $course): Response
@@ -220,7 +222,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * Bulk download grades for a course (CSV format)
+     * Bulk download grades for a course (CSV format).
      */
     #[Route('/course/{id}/export', name: 'app_grade_export', methods: ['GET'])]
     public function export(Course $course): Response
@@ -247,9 +249,8 @@ class GradeController extends AbstractController
 
         $response = new Response($csv);
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . $course->getTitle() . '_grades.csv"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="'.$course->getTitle().'_grades.csv"');
 
         return $response;
     }
 }
-

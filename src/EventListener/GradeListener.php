@@ -5,9 +5,9 @@ namespace App\EventListener;
 use App\Entity\Grade;
 use App\Service\StatisticService;
 use Doctrine\ORM\Event\PostPersistEventArgs;
-use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
-use Doctrine\ORM\Events;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+
 class GradeListener
 {
     public function __construct(
@@ -16,7 +16,7 @@ class GradeListener
     }
 
     /**
-     * Called when a grade is created
+     * Called when a grade is created.
      */
     public function postPersist(PostPersistEventArgs $args): void
     {
@@ -31,7 +31,7 @@ class GradeListener
     }
 
     /**
-     * Called when a grade is updated
+     * Called when a grade is updated.
      */
     public function postUpdate(PostUpdateEventArgs $args): void
     {
@@ -46,7 +46,7 @@ class GradeListener
     }
 
     /**
-     * Called when a grade is deleted
+     * Called when a grade is deleted.
      */
     public function postRemove(PostRemoveEventArgs $args): void
     {
@@ -61,7 +61,7 @@ class GradeListener
     }
 
     /**
-     * Handle grade changes - invalidate caches and log changes
+     * Handle grade changes - invalidate caches and log changes.
      */
     private function onGradeChange(Grade $grade): void
     {
@@ -70,7 +70,7 @@ class GradeListener
         // - Event dispatching for grade changes
         // - Notifications to teachers/students
         // - Audit logging
-        
+
         // For now, this serves as a hook point for future enhancements
         // The statistics will be calculated on-demand by StatisticService
     }

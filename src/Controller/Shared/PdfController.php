@@ -17,7 +17,7 @@ class PdfController extends AbstractController
     public function studentBulletin(
         int $courseId,
         CourseRepository $courseRepository,
-        PdfGeneratorService $pdfGenerator
+        PdfGeneratorService $pdfGenerator,
     ): Response {
         $course = $courseRepository->find($courseId);
         if (!$course) {
@@ -50,7 +50,7 @@ class PdfController extends AbstractController
     public function courseReport(
         int $courseId,
         CourseRepository $courseRepository,
-        PdfGeneratorService $pdfGenerator
+        PdfGeneratorService $pdfGenerator,
     ): Response {
         $course = $courseRepository->find($courseId);
         if (!$course) {
@@ -75,7 +75,7 @@ class PdfController extends AbstractController
     public function courseReportView(
         int $courseId,
         CourseRepository $courseRepository,
-        PdfGeneratorService $pdfGenerator
+        PdfGeneratorService $pdfGenerator,
     ): Response {
         $course = $courseRepository->find($courseId);
         if (!$course) {
@@ -100,7 +100,7 @@ class PdfController extends AbstractController
     public function studentBulletinView(
         int $courseId,
         CourseRepository $courseRepository,
-        PdfGeneratorService $pdfGenerator
+        PdfGeneratorService $pdfGenerator,
     ): Response {
         $course = $courseRepository->find($courseId);
         if (!$course) {

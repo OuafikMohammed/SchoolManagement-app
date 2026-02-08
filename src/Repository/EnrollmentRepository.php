@@ -19,7 +19,7 @@ class EnrollmentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find enrollment for a student in a course
+     * Find enrollment for a student in a course.
      */
     public function findEnrollment(User $student, Course $course): ?Enrollment
     {
@@ -33,7 +33,7 @@ class EnrollmentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all enrollments for a student
+     * Find all enrollments for a student.
      */
     public function findByStudent(User $student): array
     {
@@ -46,7 +46,7 @@ class EnrollmentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all enrollments in a course
+     * Find all enrollments in a course.
      */
     public function findByCourse(Course $course): array
     {

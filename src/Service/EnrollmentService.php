@@ -17,7 +17,7 @@ class EnrollmentService
     }
 
     /**
-     * Enroll a student in a course
+     * Enroll a student in a course.
      */
     public function enrollStudent(User $student, Course $course): Enrollment
     {
@@ -38,7 +38,7 @@ class EnrollmentService
     }
 
     /**
-     * Drop a student from a course
+     * Drop a student from a course.
      */
     public function dropStudent(User $student, Course $course): void
     {
@@ -53,7 +53,7 @@ class EnrollmentService
     }
 
     /**
-     * Check if student is enrolled in course
+     * Check if student is enrolled in course.
      */
     public function isEnrolled(User $student, Course $course): bool
     {

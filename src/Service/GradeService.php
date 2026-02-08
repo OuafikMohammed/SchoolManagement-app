@@ -7,7 +7,6 @@ use App\Entity\Grade;
 use App\Entity\User;
 use App\Repository\GradeRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 class GradeService
 {
@@ -22,7 +21,7 @@ class GradeService
     }
 
     /**
-     * Add a grade for a student
+     * Add a grade for a student.
      */
     public function addGrade(User $student, Course $course, float $value, string $type = 'exam', int $coefficient = 1): Grade
     {
@@ -44,25 +43,25 @@ class GradeService
     }
 
     /**
-     * Update a grade
+     * Update a grade.
      */
     public function updateGrade(Grade $grade, float $value, ?string $type = null, ?int $coefficient = null): void
     {
         $this->validateGradeValue($value);
-        if ($type !== null) {
+        if (null !== $type) {
             $this->validateGradeType($type);
         }
-        if ($coefficient !== null) {
+        if (null !== $coefficient) {
             $this->validateCoefficient($coefficient);
         }
 
         $grade->setValue($value);
 
-        if ($type !== null) {
+        if (null !== $type) {
             $grade->setType($type);
         }
 
-        if ($coefficient !== null) {
+        if (null !== $coefficient) {
             $grade->setCoefficient($coefficient);
         }
 
@@ -70,7 +69,7 @@ class GradeService
     }
 
     /**
-     * Delete a grade
+     * Delete a grade.
      */
     public function deleteGrade(Grade $grade): void
     {
@@ -79,7 +78,7 @@ class GradeService
     }
 
     /**
-     * Get all grades for a student in a course
+     * Get all grades for a student in a course.
      */
     public function getGradesByStudentAndCourse(User $student, Course $course): array
     {
@@ -87,7 +86,7 @@ class GradeService
     }
 
     /**
-     * Get all grades in a course
+     * Get all grades in a course.
      */
     public function getGradesByCourse(Course $course): array
     {
@@ -95,7 +94,7 @@ class GradeService
     }
 
     /**
-     * Get average grade for a student in a course
+     * Get average grade for a student in a course.
      */
     public function getAverageGrade(User $student, Course $course): ?float
     {
@@ -103,7 +102,7 @@ class GradeService
     }
 
     /**
-     * Get all grades for a student
+     * Get all grades for a student.
      */
     public function getGradesByStudent(User $student): array
     {
@@ -111,7 +110,7 @@ class GradeService
     }
 
     /**
-     * Check if student has any grades in a course
+     * Check if student has any grades in a course.
      */
     public function hasGradesInCourse(User $student, Course $course): bool
     {
@@ -119,40 +118,37 @@ class GradeService
     }
 
     /**
-     * Get grades by type in a course
+     * Get grades by type in a course.
      */
     public function getGradesByType(Course $course, string $type): array
     {
         $this->validateGradeType($type);
+
         return $this->gradeRepository->findByCourseAndType($course, $type);
     }
 
     /**
-     * Validate grade value
+     * Validate grade value.
      */
     private function validateGradeValue(float $value): void
     {
         if ($value < self::GRADE_MIN || $value > self::GRADE_MAX) {
-            throw new \InvalidArgumentException(
-                sprintf('Grade must be between %d and %d', self::GRADE_MIN, self::GRADE_MAX)
-            );
+            throw new \InvalidArgumentException(sprintf('Grade must be between %d and %d', self::GRADE_MIN, self::GRADE_MAX));
         }
     }
 
     /**
-     * Validate grade type
+     * Validate grade type.
      */
     private function validateGradeType(string $type): void
     {
         if (!in_array($type, self::VALID_TYPES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf('Grade type must be one of: %s', implode(', ', self::VALID_TYPES))
-            );
+            throw new \InvalidArgumentException(sprintf('Grade type must be one of: %s', implode(', ', self::VALID_TYPES)));
         }
     }
 
     /**
-     * Validate coefficient
+     * Validate coefficient.
      */
     private function validateCoefficient(int $coefficient): void
     {
@@ -161,4 +157,3 @@ class GradeService
         }
     }
 }
-

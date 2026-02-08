@@ -14,16 +14,16 @@ class PdfGeneratorService
 {
     public function __construct(
         private Environment $twig,
-        private StatisticRepository $statisticRepository
+        private StatisticRepository $statisticRepository,
     ) {
     }
 
     /**
-     * Generate a student bulletin (grade report) PDF
+     * Generate a student bulletin (grade report) PDF.
      */
     public function generateBulletin(User $student, Course $course): string
     {
-        $grades = $course->getGrades()->filter(fn(Grade $g) => $g->getStudent() === $student);
+        $grades = $course->getGrades()->filter(fn (Grade $g) => $g->getStudent() === $student);
         $average = $this->statisticRepository->calculateAverageGrade($student, $course);
         $rankedStudents = $this->statisticRepository->getRankedStudentsByCourse($course);
 
@@ -46,11 +46,11 @@ class PdfGeneratorService
             'generatedAt' => new \DateTime(),
         ]);
 
-        return $this->renderToPdf($html, $student->getName() . '_' . $course->getTitle());
+        return $this->renderToPdf($html, $student->getName().'_'.$course->getTitle());
     }
 
     /**
-     * Generate a course report (teacher view) PDF
+     * Generate a course report (teacher view) PDF.
      */
     public function generateCourseReport(Course $course): string
     {
@@ -63,7 +63,7 @@ class PdfGeneratorService
             $gradeDistribution[] = [
                 'student' => $student,
                 'average' => $average,
-                'gradeCount' => $course->getGrades()->filter(fn(Grade $g) => $g->getStudent() === $student)->count(),
+                'gradeCount' => $course->getGrades()->filter(fn (Grade $g) => $g->getStudent() === $student)->count(),
             ];
         }
 
@@ -71,6 +71,7 @@ class PdfGeneratorService
         usort($gradeDistribution, function ($a, $b) {
             $avgA = $a['average'] ?? 0;
             $avgB = $b['average'] ?? 0;
+
             return $avgB <=> $avgA;
         });
 
@@ -81,11 +82,11 @@ class PdfGeneratorService
             'generatedAt' => new \DateTime(),
         ]);
 
-        return $this->renderToPdf($html, $course->getTitle() . '_Report');
+        return $this->renderToPdf($html, $course->getTitle().'_Report');
     }
 
     /**
-     * Convert HTML to PDF
+     * Convert HTML to PDF.
      */
     private function renderToPdf(string $html, string $filename): string
     {

@@ -25,7 +25,7 @@ class EditProfileType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'your@email.com',
-                ]
+                ],
             ])
             ->add('name', TextType::class, [
                 'required' => false,
@@ -38,7 +38,7 @@ class EditProfileType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Your full name',
-                ]
+                ],
             ])
         ;
     }

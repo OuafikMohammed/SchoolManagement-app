@@ -64,8 +64,8 @@ parameters:
     # Symfony Extension Configuration
     # ========================================================================
     symfony:
-        # Container file for service analysis
-        container_xml_path: %currentWorkingDirectory%/var/cache/dev/App_Kernel.xml
+        # Container file for service analysis (disabled for CI/CD compatibility)
+        # container_xml_path: %currentWorkingDirectory%/var/cache/dev/App_Kernel.xml
 
     # ========================================================================
     # Doctrine Extension Configuration

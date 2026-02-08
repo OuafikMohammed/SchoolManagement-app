@@ -18,7 +18,7 @@ class CourseRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all courses for a given student (courses they're enrolled in)
+     * Find all courses for a given student (courses they're enrolled in).
      */
     public function findCoursesForStudent(User $student): array
     {
@@ -33,7 +33,7 @@ class CourseRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find available courses for a student (not yet enrolled)
+     * Find available courses for a student (not yet enrolled).
      */
     public function findAvailableForStudent(User $student): array
     {
@@ -47,7 +47,7 @@ class CourseRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all courses taught by a teacher
+     * Find all courses taught by a teacher.
      */
     public function findByTeacher(User $teacher): array
     {

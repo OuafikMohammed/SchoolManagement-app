@@ -23,7 +23,7 @@ class RegistrationType extends AbstractType
                 'constraints' => [
                     new NotBlank(),
                     new UniqueEmail(),
-                ]
+                ],
             ])
             ->add('name', TextType::class, ['required' => false])
             ->add('plainPassword', PasswordType::class, [
