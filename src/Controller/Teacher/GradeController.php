@@ -59,7 +59,7 @@ class GradeController extends AbstractController
             }
 
             if ($typeFilter && !empty($courseGrades)) {
-                $courseGrades = array_filter($courseGrades, fn ($g) => $g->getType() === $typeFilter);
+                $courseGrades = array_filter($courseGrades, fn($g) => $g->getType() === $typeFilter);
             }
 
             $grades = array_merge($grades, $courseGrades);
@@ -67,13 +67,13 @@ class GradeController extends AbstractController
 
         // Sort grades
         usort($grades, match ($sortBy) {
-            'student' => fn ($a, $b) => strcmp(
+            'student' => fn($a, $b) => strcmp(
                 $a->getStudent()?->getName() ?? $a->getStudent()?->getEmail() ?? '',
                 $b->getStudent()?->getName() ?? $b->getStudent()?->getEmail() ?? ''
             ),
-            'value' => fn ($a, $b) => $b->getValue() <=> $a->getValue(),
-            'type' => fn ($a, $b) => strcmp($a->getType(), $b->getType()),
-            default => fn ($a, $b) => $b->getCreatedAt() <=> $a->getCreatedAt(),
+            'value' => fn($a, $b) => $b->getValue() <=> $a->getValue(),
+            'type' => fn($a, $b) => strcmp($a->getType(), $b->getType()),
+            default => fn($a, $b) => $b->getCreatedAt() <=> $a->getCreatedAt(),
         });
 
         return $this->render('teacher/grade/index.html.twig', [
@@ -188,7 +188,7 @@ class GradeController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('DELETE', $grade);
 
-        if ($this->isCsrfTokenValid('delete'.$grade->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $grade->getId(), $request->request->get('_token'))) {
             $studentName = $grade->getStudent()->getName() ?? $grade->getStudent()->getEmail();
             $this->gradeService->deleteGrade($grade);
             $this->addFlash('success', sprintf('Grade deleted for %s', $studentName));
@@ -249,7 +249,7 @@ class GradeController extends AbstractController
 
         $response = new Response($csv);
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="'.$course->getTitle().'_grades.csv"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $course->getTitle() . '_grades.csv"');
 
         return $response;
     }
