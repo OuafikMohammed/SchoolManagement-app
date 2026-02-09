@@ -47,6 +47,9 @@ RUN apk add --no-cache \
 # Copy from builder
 COPY --from=builder /app /app
 
+# Create necessary directories
+RUN mkdir -p /app/var/data /app/var/cache /app/var/log
+
 # Set permissions
 RUN chown -R www-data:www-data /app && \
     chmod -R 755 /app/public && \
