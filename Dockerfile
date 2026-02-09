@@ -47,12 +47,11 @@ RUN apk add --no-cache \
 # Copy from builder
 COPY --from=builder /app /app
 
-# Create necessary directories
-RUN mkdir -p /app/var/data /app/var/cache /app/var/log
-
-# Set permissions
-RUN chown -R www-data:www-data /app && \
-    chmod -R 755 /app/public && \
+# Create necessary directories and set permissions atomically
+RUN mkdir -p /app/var/data /app/var/cache /app/var/log && \
+    mkdir -p /app/public && \
+    chown -R www-data:www-data /app && \
+    chmod -R 755 /app && \
     chmod -R 775 /app/var
 
 # Install dumb-init for signal handling
