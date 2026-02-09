@@ -3,7 +3,7 @@ services:
     name: school-management
     env: php
     plan: free
-    buildCommand: chmod +x build.sh && ./build.sh
+    buildCommand: bash build.sh
     startCommand: php bin/console server:start 0.0.0.0:10000
     envVars:
       - key: APP_ENV
