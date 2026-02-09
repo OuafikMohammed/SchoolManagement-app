@@ -3,19 +3,21 @@ FROM php:8.2-fpm-alpine AS builder
 
 WORKDIR /app
 
-# Install system dependencies
+# Install build dependencies and system libraries
 RUN apk add --no-cache \
     git \
     curl \
     bash \
+    build-base \
     zlib-dev \
-    libzip-dev
+    libzip-dev \
+    sqlite-dev \
+    oniguruma-dev
 
 # Install PHP extensions
 RUN docker-php-ext-install \
-    pdo \
-    pdo_sqlite \
-    zip
+    zip \
+    pdo_sqlite
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -41,13 +43,14 @@ WORKDIR /app
 # Install runtime dependencies
 RUN apk add --no-cache \
     curl \
-    bash
+    bash \
+    sqlite-libs \
+    libzip
 
-# Install PHP extensions
+# Install PHP extensions (pdo and sqlite3 are built-in, just recompile with libraries)
 RUN docker-php-ext-install \
-    pdo \
-    pdo_sqlite \
-    zip
+    zip \
+    pdo_sqlite
 
 # Copy from builder
 COPY --from=builder /app /app
