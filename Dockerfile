@@ -10,11 +10,13 @@ RUN apk add --no-cache \
     bash \
     build-base \
     zlib-dev \
-    libzip-dev
+    libzip-dev \
+    icu-dev
 
 # Configure PHP extensions (already included in base image)
 RUN docker-php-ext-install \
-    zip
+    zip \
+    intl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -37,12 +39,15 @@ FROM php:8.2-fpm-alpine
 
 WORKDIR /app
 
-# Install runtime dependencies only
+# Install system dependencies and intl extension
 RUN apk add --no-cache \
     curl \
     bash \
     sqlite-libs \
-    libzip
+    libzip \
+    icu-libs \
+    icu-dev && \
+    docker-php-ext-install intl
 
 # Copy from builder
 COPY --from=builder /app /app
@@ -55,11 +60,17 @@ RUN mkdir -p /app/var/data /app/var/cache /app/var/log && \
     chmod -R 775 /app/var && \
     chmod +x /app/build.sh
 
-# Run initialization as root before switching to www-data
+# Initialize database as root
 RUN APP_ENV=prod APP_DEBUG=false DATABASE_URL="sqlite:///%kernel.project_dir%/var/data/school.db" \
-    php bin/console doctrine:database:create --if-not-exists || true && \
-    php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true && \
-    php bin/console cache:warmup --env=prod || true
+    bash -c 'set -e; \
+    echo "Creating database..."; \
+    php bin/console doctrine:database:create --if-not-exists 2>&1; \
+    echo "Running migrations..."; \
+    php bin/console doctrine:migrations:migrate --no-interaction 2>&1; \
+    echo "Warming cache..."; \
+    php bin/console cache:warmup --env=prod 2>&1; \
+    echo "Database initialization complete"; \
+    chown -R www-data:www-data /app/var'
 
 # Install dumb-init for signal handling
 RUN apk add --no-cache dumb-init
