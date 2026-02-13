@@ -14,16 +14,18 @@ export PHP_FPM_CMD="php-fpm -F"
 
 echo "📡 Port: $PORT"
 echo "🔧 Environment: $APP_ENV"
-echo "🔐 APP_SECRET configured: $([ -z "$APP_SECRET" ] && echo 'NO - MUST SET IN RAILWAY' || echo 'YES')"
+echo "🔐 APP_DEBUG: $APP_DEBUG"
 
 # Validate PORT is a valid number
 if ! [[ "$PORT" =~ ^[0-9]+$ ]] || [ "$PORT" -lt 1 ] || [ "$PORT" -gt 65535 ]; then
-    echo "❌ Invalid PORT: $PORT"
+    echo "❌ FATAL: Invalid PORT: $PORT"
     exit 1
 fi
 
-# Note: Using TCP socket (127.0.0.1:9000) - no Unix socket directory needed
-# The /run directory is system-managed and should not be modified
+# Validate APP_ENV is production
+if [ "$APP_ENV" != "prod" ]; then
+    echo "⚠️  WARNING: APP_ENV is not 'prod' (value: $APP_ENV)"
+fi
 
 # Setup Symfony directories
 cd /var/www/app
@@ -41,28 +43,27 @@ envsubst '${PORT}' < /etc/nginx/sites-available/default > /tmp/nginx.conf && \
 # Validate Nginx config
 echo "🧪 Validating Nginx configuration..."
 if ! nginx -t 2>&1 | grep -q "successful"; then
-    echo "❌ Nginx configuration error:"
+    echo "❌ FATAL: Nginx configuration has errors"
     nginx -t
     exit 1
 fi
-echo "✅ Nginx config is valid"
+echo "✅ Nginx configuration valid"
 
-# Validate Symfony configuration
-echo "🔍 Validating Symfony configuration..."
-if ! php bin/console config:validate --env=prod 2>&1; then
-    echo "⚠️  Symfony config has warnings, continuing..."
-fi
-
-# Database migrations (already run in Dockerfile, but check again)
-if [ -f "bin/console" ] && [ -f "var/data/school_management_prod.db" ] 2>/dev/null; then
-    echo "🗄️  Checking database migrations..."
+# Database setup (SQLite)
+DB_FILE="/var/www/app/var/data/school_management_prod.db"
+if [ ! -f "$DB_FILE" ]; then
+    echo "🗄️  Creating SQLite database..."
+    php bin/console doctrine:database:create --if-not-exists --env=prod --no-interaction 2>/dev/null || true
     php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod 2>/dev/null || true
+    echo "✅ Database created and migrated"
+else
+    echo "✅ Database already exists at $DB_FILE"
 fi
 
-# Ensure cache is warmed up (done in Dockerfile, but verify)
-if [ ! -d "var/cache/prod" ] || [ -z "$(ls -A var/cache/prod)" ]; then
-    echo "🔥 Warming up Symfony cache (should have been done in build)..."
-    php bin/console cache:warmup --env=prod
+# Ensure cache is warmed up
+if [ ! -d "var/cache/prod" ] || [ -z "$(ls -A var/cache/prod 2>/dev/null)" ]; then
+    echo "🔥 Warming up Symfony cache..."
+    php bin/console cache:warmup --env=prod --no-interaction 2>/dev/null || true
 fi
 
 # Fix permissions one final time
@@ -71,17 +72,17 @@ chown -R www-data:www-data /var/www/app
 chmod -R 755 /var/www/app
 chmod -R 775 var/cache var/log var/data var/sessions
 
-# Log rotation setup
-echo "📝 Setting up log management..."
-mkdir -p /var/log/supervisor
-touch /var/log/php-fpm.log /var/log/php-error.log /var/log/php-access.log
-chown -R www-data:www-data /var/log/php-*.log
+# Initialize log directories
+mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/nginx
+touch /var/log/php-fpm.log /var/log/php-error.log 2>/dev/null || true
 
 echo ""
 echo "╔════════════════════════════════════════════════════╗"
-echo "║  ✅ Initialization complete - starting services   ║"
+echo "║  ✅ Initialization complete                        ║"
+echo "║  Starting: Supervisor → PHP-FPM → Nginx          ║"
 echo "╚════════════════════════════════════════════════════╝"
 echo ""
 
 # Start supervisor (manages PHP-FPM and Nginx)
+# PHP-FPM starts first (priority 998), then Nginx (priority 999)
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

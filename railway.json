@@ -18,11 +18,11 @@
       "value": "0"
     },
     "APP_SECRET": {
-      "description": "Symfony application secret - generate a random string",
+      "description": "Symfony application secret - generate a random 32+ character string in Railway variables",
       "showValue": false
     },
     "DATABASE_URL": {
-      "description": "Database connection string - use SQLite for simplicity or connect to external DB",
+      "description": "SQLite database location for Railway production",
       "value": "sqlite:///%kernel.project_dir%/var/data/school_management_prod.db"
     },
     "DEFAULT_URI": {

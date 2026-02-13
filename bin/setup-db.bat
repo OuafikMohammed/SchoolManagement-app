@@ -124,9 +124,10 @@ echo.
 echo [INFO] Database location: %PROJECT_ROOT%%DB_PATH%
 echo.
 echo [INFO] Next steps:
-echo   1. Start the Symfony server: symfony server:start
-echo   2. Open browser: http://localhost:8000
-echo   3. Run tests: php bin\phpunit
+echo   1. For LOCAL development: symfony server:start
+echo   2. For PRODUCTION (Railway): Docker container auto-starts with start.sh
+echo   3. Open browser: http://localhost:8000 (local) or your Railway URL (production)
+echo   4. Run tests: php bin\phpunit
 echo.
 echo ============================================================================
 echo.
