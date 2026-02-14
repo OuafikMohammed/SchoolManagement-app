@@ -10,6 +10,7 @@ export PORT=${PORT:-8080}
 export APP_ENV=${APP_ENV:-prod}
 export APP_DEBUG=${APP_DEBUG:-0}
 export APP_SECRET=${APP_SECRET:-}
+export PHP_FPM_CMD="php-fpm -F"
 
 # Ensure APP_SECRET exists to avoid Symfony 500 errors in production
 if [ -z "$APP_SECRET" ]; then
@@ -17,11 +18,11 @@ if [ -z "$APP_SECRET" ]; then
     APP_SECRET=$(php -r "echo bin2hex(random_bytes(32));")
     export APP_SECRET
 fi
-export PHP_FPM_CMD="php-fpm -F"
 
 echo "📡 Port: $PORT"
 echo "🔧 Environment: $APP_ENV"
 echo "🔐 APP_DEBUG: $APP_DEBUG"
+echo "✅ APP_SECRET configured"
 
 # Validate PORT is a valid number
 if ! [[ "$PORT" =~ ^[0-9]+$ ]] || [ "$PORT" -lt 1 ] || [ "$PORT" -gt 65535 ]; then
